@@ -1,0 +1,285 @@
+
+/**
+ * Vue Component Framework
+ * Enables components to be loaded inside templates.
+ **/
+
+
+/**
+ * Voor het laden van template[module] tags.
+ * Maakt gebruik van de domComponentCollector.
+ **/
+function loadModules(context) {
+    var modules = $('template[module]', context).get();
+
+    modules.forEach(function (comp) {
+
+        var moduleName = comp.getAttribute('module');
+        var object = domComponentCollectorRaw.call(comp);
+
+        window[moduleName] = object.then(object => {
+        	// console.log(object, "Set " + moduleName)
+        	window[moduleName] = object;
+        })
+
+        $(domCollectorStriptags(comp.innerHTML)).appendTo('body');
+    });
+}
+
+/**
+ * Construct an object from some template tag. Used by domComponentCollector and loadModules
+ * to extract application pieces from the supplied document.
+ *
+ * Rules:
+ * <script src=""> are loaded via jQuery.getScript to prevent deprecated synchronous loading in main thread. 
+ * <link rel="Stylesheets"> works
+ * <script> tags are may do export default { }
+ **/
+function domComponentCollectorRaw() {
+    var template = this.content;
+    var script = template.querySelector('script:not([src])');   
+    var loadScripts = template.querySelectorAll('script[src]');   
+
+    var getObject = function () {
+    	var object = {};
+    	if (script) {
+    		var code = script.innerHTML.replace(/export default/,'module.exports = ');
+
+    		var matches = [];
+
+    		code.replace(/require\s*\(['"]([A-Za-z0-9\-\./]+)['"]\)/ig, (...match) => {
+    			console.log(match);
+    			console.log("Wait for " + match[1]);
+    			matches.push(window[match[1]]);
+    		});
+
+    		
+    		if (matches) {
+    			return Promise.all(matches).then(done => {
+    				console.log("All matches have been resolved.");
+    				return commonJsExec(code);
+    			})
+    		} else {
+    			return commonJsExec(code);
+    		}
+
+    		
+    	}
+    	return object;
+    }
+  
+    if (loadScripts.length) {
+    	return new Promise((resolve, reject) => {
+	    	var p = Promise.resolve();
+
+	        Array.prototype.forEach.call(loadScripts, script => {
+	            // alert("Load " + script.getAttribute('src'));
+	            
+	            var url = script.getAttribute('src');
+	            p = p.then(res => { return $.getScript(url) }).then(x => {
+	            	//console.log("Loaded " + url);
+	            })
+	        })  
+
+	        p.then(
+	            done => {
+	            	// console.log("DONE?");
+                	resolve(getObject());    
+	            },
+	            error => {
+	                // A primitive solution, but otherwise no errors are shown, 
+	                // and the user will be unaware that something went wrong (besides the
+	                // fact that some part of the application does not seem to be responding)
+	                reject(error);
+	            }
+	        )
+	
+    	})
+    }
+
+    return Promise.resolve(getObject());
+}
+
+function domCollectorStriptags(html) {
+
+    // Replace all script tags.
+    html =  html.replace(/<script[\s\S.]*?<\/script>/gi, '');
+
+    // Also replace spaces from the template.
+    html = html.replace(/(^\s+|\s+$)/g,'');	
+
+    return html;	
+}
+
+function domComponentCollector(componentName) {
+    componentName = componentName || '';
+
+    var promise = domComponentCollectorRaw.call(this);
+
+	var props = (this.getAttribute('props')||'').split(/\s?,\s?/).filter(Boolean);
+    var html = this.innerHTML;
+
+
+    // Return a vue resolvable component definition.
+    return function (resolve, reject) {
+    	promise.then(object => {
+	    		
+	    	html = domCollectorStriptags(html);
+
+            // Always wrap component name as class name for convenience.
+			object.template = html
+
+		    if (object.props && props && props.length) {
+		        console.log("Error: export props and attribute props mixed at " + componentName + " definition.");
+		    } else if (!object.props && props) {
+		    	object.props = props
+		    }
+
+    		resolve(object);
+    	}).catch(reject);
+    };
+}
+
+
+function loadVueComponents(context) {
+
+    var components = $('template[component]', context).get();
+
+    components.forEach(function (comp) {
+        var componentName = comp.getAttribute('component');
+        var object = domComponentCollector.call(comp, componentName)
+
+        Vue.component(componentName, object);           
+    });
+
+}
+
+
+
+function collectRoutes(context, handled) {
+    var routes = {};
+    handled = handled || []
+
+    var lookup = {};
+
+    $('template[url]',context).each(function () {
+        if (handled.indexOf(this) !== -1) {
+            //already handled.
+            return;
+        }
+        var url = this.getAttribute('url');       
+
+        var routeObject = {}
+        $.each(this.attributes, (key, value) => {
+            // skip url
+            if (value.nodeName && value.nodeValue && (value.nodeName !== 'url')) {
+                if (value.nodeValue.match(/true|false/i)) {
+                    routeObject[value.nodeName] = !!value.nodeValue.match(/true/i)
+                } else { 
+                    routeObject[value.nodeName] = value.nodeValue
+                }
+            }
+        })
+
+        routeObject.component = domComponentCollector.call(this)
+        routes[url] = routeObject
+
+        handled.push(this);
+
+        routeObject.subRoutes = collectRoutes(this, handled);
+
+        console.log(routeObject.subRoutes, 'subroutes hiero');
+
+        lookup[url] = routes[url]
+    })
+
+    $('template[sub-url]',context).each(function () {
+
+        var subUrl = this.getAttribute('sub-url');
+        var foundParent = false
+        
+        var parentUrl;
+
+        for (parentUrl in lookup) {
+            if (parentUrl !== '/' && subUrl.indexOf(parentUrl) === 0) {
+                foundParent = parentUrl
+                //break;
+            }
+        }
+
+        if (!foundParent) {
+            throw new Error('sub-url could not find parent for url `' + subUrl + '`');
+        }
+
+        console.log("Found parent " + foundParent + " for sub url " + subUrl)
+
+        
+
+        if (!lookup[foundParent].subRoutes) {
+            lookup[foundParent].subRoutes = {}
+        }
+
+        lookup[foundParent].subRoutes[subUrl.substr(foundParent.length)] = {component: domComponentCollector.call(this) };
+
+        if (subUrl.substr(foundParent.length).length > 1 && !(subUrl in lookup)) {
+            lookup[subUrl] = lookup[foundParent].subRoutes[subUrl.substr(foundParent.length)]
+        }
+
+    })
+
+
+
+    return routes;
+}
+
+
+var oldRequire;
+if (typeof require !== 'undefined') {
+	oldRequire = require
+} else { 
+	oldRequire = window.require
+}
+
+function require_script(name) {
+    if (window[name]) {
+        return window[name];
+    } if (oldRequire) {
+        return oldRequire(name)
+    }
+
+    throw new Error("Cannot require asynchronously: " + name);  
+};
+
+function commonJsExec(code) {
+	try { 
+	    var moduleJsFn = new Function('module,exports,require', code);
+	    
+	    /* work in progress... dynamic module resolve.
+	    moduleJs.match(/\W?require\(.+?\)/g).forEach(function (req) {
+	        req = req.match(/["'].+?["']/);
+	        
+	        console
+	    })*/
+	    
+	    var module = {exports:{}};
+	  
+
+
+	    // Run it
+	    moduleJsFn(module, module.exports, require_script);
+	    
+	    // and return the exports:
+	    return module.exports;    
+
+	} catch (error) {
+		console.error(error.stack);
+		console.info('in code: ' + code);
+	}
+}
+
+module.exports = {
+	commonJsExec: commonJsExec,
+	loadModules: loadModules,
+	loadVueComponents: loadVueComponents,
+	collectRoutes: collectRoutes
+}

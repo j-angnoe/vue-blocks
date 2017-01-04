@@ -1,0 +1,253 @@
+<html>
+	<head>
+		<title>Vue Blocks Framework</title>
+		<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<script src="../dist/vue-blocks.js"></script>
+	</head>
+	<body>
+
+		<div class="container">
+			<header>
+				<h1>Vue blocks</h1>
+			</header>
+			<!-- app mount point -->
+			<app></app>
+		</div>
+
+		<template module="snippets">
+			<script>
+			module.exports = {
+				'one': `<template component="app">
+	<div class="container">
+		<nav>
+			<my-navigation></my-navigation>
+		</nav>
+		<router-view></router-view>
+	</div>
+</template>
+
+<!-- reusable components -->
+<template component="my-navigation">
+	<a v-link="{path: '/'}">Home</a>
+	<a v-link="{path: '/page1'}">Page 1</a>
+</template>`,
+				'two':`<template url="/">
+	<div>Welcome to my awesome app</div>
+</template>
+
+<template url="/page1">
+	<div>Page 1</div>
+</template>`,
+				'three': `
+<template component="full-component-example">
+	<div class="full-component-example">
+		<div>This is the html template for this tag, and may contain any html and vue code.</div>
+		<div>A vue value: {{some_vue_value}}</div>
+		<div>A simple counter: {{counter}} <button @click="addOneToCounter()">Add one to counter</button>
+		</div>
+	</div>	
+
+	<script>
+	// Write your vue component object like usual.
+	export default {	
+		data() {
+			return {
+				some_vue_value: 'value1',
+				counter: 0
+			}
+		},
+		ready() {
+			console.log("Component is ready")
+		},
+		methods: {
+			addOneToCounter() {
+				this.counter += 1;
+			}
+		}
+	}
+	</${'script'}>
+</template>
+`
+			}
+			</script>
+		</template>
+	
+		<template component="app">
+			<nav>
+			<ul class="nav nav-tabs">
+				<li class=""><a v-link="{path:'/'}">Start</a></li>
+				<li class=""><a v-link="{path:'/try-it'}">Try it!</a></li>
+			</ul>
+			</nav>
+
+			<router-view></router-view>
+
+		</template>
+
+		<template url="/">
+			<div>
+				<h2>The short story</h2>
+				<p>
+					 Vue blocks allow you to easily build 
+					 a single page application using simple
+					 building blocks:
+				</p>
+
+				<p>
+				1. Define components<br>
+				<pre>{{code_snippet1}}</pre>
+				</p>
+
+				<p>
+				2. Define your routes<br>
+				<pre>{{code_snippet2}}</pre>
+				</p>
+
+				<p>3. Build the future web!
+				</p>
+
+				<h2>Components</h2>
+
+				<p>Each component is defined inside a &lt;template component&gt; tag. Inside this tag you may write html and a script-tag containing the component code. 
+
+				<pre>{{code_snippet3}}</pre>
+
+
+				</p>
+
+				<h2>Why?</h2>
+				<p>Vue blocks was developed to quickly build single page prototypes.</p>
+
+				<h2>What's in it?</h2>
+				<ul>
+					<li>Vue 1</li>
+					<li>Vue Router 0.7</li>
+				</ul>
+				<!-- 
+					<div class="row">
+						<div class="col-sm-6">
+						left
+						</div>
+						<div class="col-sm-6">
+						right
+						</div>
+					</div>
+				-->
+
+				<h2>Undocumented subjects</h2>
+				<p><ul>
+				<li>template component props attribute</li>
+				<li>Working with route params</li>
+				</ul>
+				</p>
+			</div>
+			<script>
+			var snippets = require('snippets');
+
+			export default {
+				data() {
+					return {
+						code_snippet1: snippets.one,
+						code_snippet2: snippets.two,
+						code_snippet3: snippets.three
+					}
+				}
+			}
+			</script>
+		</template>
+
+
+		<template url="/try-it">
+			<div>
+				<div class="row">
+					<div class="col-sm-6">
+						<textarea v-model="source" debounce="500" style="width:100%;height:100%;">
+
+						</textarea>	
+					</div>
+					<div class="col-sm-6" style="height:100%;">
+						<code-preview :code="html"></code-preview>	
+					</div>
+				</div>
+				
+
+				
+			</div>
+			<script>
+			var snippets = require('snippets');
+			var header = '<app></app>' + "\n\n";
+
+			export default {
+				data() {
+					return {
+						source: header + snippets.one + snippets.two,
+					}
+				},
+				computed: {
+					html() {
+						return this.source
+					}
+				}
+			}
+			</script>
+		</template>
+
+		<template component="code-preview">
+			<div style="display: block; width:100%; height:100%;">  
+				<iframe :src="iframeSource" style="display: block; width:100%; height:800px;"></iframe> 
+				<!-- <pre>{{code | json }}</pre> -->
+			</div>
+			<script>
+			export default {
+				props: {
+					"code" : {
+						type: String,
+						required:true
+					}
+				},
+				computed: {
+					template() {
+						var code = this.code;
+						var path_to_vue_blocks = location.toString().split('#')[0] + '../dist/vue-blocks.js'
+
+						return `<html>
+							<head>
+		<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></${'script'}>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="${path_to_vue_blocks}"></${'script'}>
+			
+							</head>
+							<body>
+								<!-- preview: html -->
+								${code}
+							</body>
+							</html>	
+						`;
+					}, 
+
+					ready() {
+
+					},
+
+					iframeSource() {
+						var dataUrl  = "data:text/html;charset=utf-8,";
+						var template = this.template;		
+
+						return dataUrl + escape(template);
+					}
+				},
+			}
+			</script>
+		</template>
+
+
+	</body>
+</html>

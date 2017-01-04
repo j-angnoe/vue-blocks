@@ -1,0 +1,16 @@
+{
+  "name": "vue-blocks",
+  "version": "0.0.1",
+  "description": "Vue Blocks Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify ./index.js > dist/vue-blocks.js"
+  },
+  "author": "Joshua Angnoe",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^1.0.28",
+    "vue-router": "^0.7.13"
+  }
+}
