@@ -48,11 +48,8 @@ function domComponentCollectorRaw() {
     		var matches = [];
 
     		code.replace(/require\s*\(['"]([A-Za-z0-9\-\./]+)['"]\)/ig, (...match) => {
-    			console.log(match);
-    			console.log("Wait for " + match[1]);
     			matches.push(window[match[1]]);
     		});
-
     		
     		if (matches) {
     			return Promise.all(matches).then(done => {
@@ -187,8 +184,6 @@ function collectRoutes(context, handled) {
         handled.push(this);
 
         routeObject.subRoutes = collectRoutes(this, handled);
-
-        console.log(routeObject.subRoutes, 'subroutes hiero');
 
         lookup[url] = routes[url]
     })
