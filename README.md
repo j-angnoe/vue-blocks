@@ -12,12 +12,9 @@ When including vue-blocks make sure you have jQuery (3+) available.
 <html>
 	<head>
 		<title>Vue Blocks Framework</title>
-		<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-		<script src="path/to/vue-blocks/dist/vue-blocks.js"></script>
+		<script src="//unpkg.com/jquery@3.1.1/dist/jquery.min.js"></script>
+		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script>
 	</head>
 	<body>
 		<app></app>
@@ -31,13 +28,19 @@ When including vue-blocks make sure you have jQuery (3+) available.
 		</template>
 		<!-- reusable components -->
 		<template component="my-navigation">
-			<a v-link="{path: '/'}">Home</a>
-			<a v-link="{path: '/page1'}">Page 1</a>
-		</template><template url="/">
+			<router-link to="/">Home</router-link>
+			<router-link to="/page1">Page 1</router-link>
+		</template>
+		<!-- easy urls -->
+		<template url="/">
 			<div>Welcome to my awesome app</div>
 		</template>
 		<template url="/page1">
 			<div>Page 1</div>
+		</template>
+		<!-- route with params -->
+		<template url="/page2/:param">
+			<div>Page 2: Param {{$route.params.param}}</div>
 		</template>
 	</body>
 </head>
