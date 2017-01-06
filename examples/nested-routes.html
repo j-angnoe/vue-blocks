@@ -1,0 +1,97 @@
+<html>
+	<head>
+		<title>Vue Blocks Framework</title>
+		<script
+  src="//code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<script src="../dist/vue-blocks.js"></script>
+	</head>
+	<body>
+
+		<div class="container">
+			<header>
+				<h1>Vue blocks</h1>
+			</header>
+			<!-- app mount point -->
+			<app></app>
+
+			<template component="app">
+				<router-view></router-view>
+			</template>
+
+<template url="/">
+	<div>Redirecting you to /nested</div>
+	<script>
+	export default { 
+		ready() { 
+			this.$router.go('/nested'); 
+		} 
+	}
+	</script>
+</template>
+
+<template sub-url="/nested">
+	<p>Debug nested home</p>
+</template>
+
+
+<template url="/nested" auth="true">
+	<div>
+		<h1>Nested page</h1>
+
+		<ul class="nav nav-tabs">
+			<li class="nav"><router-link to="/nested/">Home</router-link></li>
+			<li class="nav"><router-link to="/nested/page1">Page1</router-link></li>
+			<li class="nav"><router-link to="/nested/page2">Page2</router-link></li>
+		</ul>	
+
+		Router view1:
+		<router-view></router-view>
+	</div>
+</template>
+
+
+<template sub-url="/nested/page1">
+	<p>Debug nested page 1</p>
+</template>
+
+<template sub-url="/nested/page2">
+	<div>
+		<p>Debug nested page 2, met nog meer sub</p>
+		Router view 2:
+
+		<ul class="nav nav-tabs">
+			<li class="nav"><router-link to="/nested/page2/page21">Home</a></li>
+			<li class="nav"><router-link to="/nested/page2/page22">Page1</a></li>
+		</ul>
+
+		<router-view>
+			Oets oets oets
+		</router-view>
+	</div>
+</template>
+
+<template sub-url="/nested/page2">
+	<div>
+			Homepage voor 2.2
+	</div>
+</template>
+
+<template sub-url="/nested/page2/page21">
+	<div>
+			Page 2.1
+	</div>
+</template>
+
+<template sub-url="/nested/page2/page22">
+	<div>
+			Page 2.2
+	</div>
+</template>
+
+		</div>
+	</body>
+</html>

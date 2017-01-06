@@ -28,4 +28,9 @@ document.addEventListener('DOMContentLoaded', done => {
     })
 })
 
+Vue.component('router-link', {
+    template: `<a v-link="{path: to}"><slot /></a>`,
+    props: ['to']
+})
+
 window.Vue = Vue
