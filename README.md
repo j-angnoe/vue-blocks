@@ -1,8 +1,8 @@
 # Vue Blocks
 
-Please review the examples/index.html.
+Please review the examples/index.html, or check it out online: http://fluxfx.nl/vue-blocks/examples/
 
-dist/vue-blocks.js bundles Vue 1.0.28 and Vue router 0.7.13. 
+dist/vue-blocks.js bundles Vue 2.1.8 and Vue router 2.1.1. 
 When including vue-blocks make sure you have jQuery (3+) available.
 
 
@@ -45,3 +45,4 @@ When including vue-blocks make sure you have jQuery (3+) available.
 	</body>
 </head>
 ```
+
