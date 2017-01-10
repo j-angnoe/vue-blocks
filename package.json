@@ -10,7 +10,7 @@
   "author": "Joshua Angnoe",
   "license": "ISC",
   "dependencies": {
-    "vue": "^1.0.28",
-    "vue-router": "^0.7.13"
+    "vue": "^2.1.8",
+    "vue-router": "^2.1.1"
   }
 }

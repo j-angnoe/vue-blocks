@@ -1,0 +1,439 @@
+<html>
+	<head>
+		<title>Vue Blocks Framework</title>
+		<script src="//unpkg.com/jquery@3.1.1/dist/jquery.min.js"></script>
+		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<!-- <script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script> -->
+
+		<script src="../dist/vue-blocks.js"></script>
+	</head>
+	<style>
+	.story {
+		white-space: pre-line;
+	}
+	</style>
+
+	<body>
+
+		<div class="container">
+			<header>
+				<h1>Vue blocks</h1>
+			</header>
+			<!-- app mount point -->
+			<app></app>
+		</div>
+
+<template component="app">
+	<div class="app">
+		<poc-navigation></poc-navigation>
+		<router-view></router-view>
+	</div>	
+</template>
+
+<template url="/" title="Intro">
+	<div class="intro">
+		<p class="story">
+			Inter component communication, important topic. There are a few ways to tackle this problem.
+			1. Pass data and event-handlers to child-components (example 1)
+			2. Parent listens to child events (instead of passing event-handlers).
+			3. Store based solutions (like vuex). 
+
+
+			Check the source code for more comments.
+			
+		</p>
+	</div>
+</template>
+
+
+
+<!-- 
+  --
+  -- EXAMPLE 1 
+  -- 
+-->
+
+<template url="/example1" title="1. Passing">
+	<div class="example1">
+		<example1-parent>
+		</example1-parent>
+	</div>
+</template>
+
+
+<template component="example1-parent">
+	<div class="example1-parent ">
+		<p class="story">
+		As a parent, i want to pass data to the child.
+
+		The child may or may not edit the data I am passing.
+
+		If the child contains something of a form, the parent
+		should be able to react when the child is ready doing its thing.
+
+		A good example of this behaviour is with a todo master/detail.
+
+		The parent displays a list of items. When one clicks on an item, 
+		an editor will appear.
+		</p>
+
+		<h2>Todo's ({{todos.length}})</h2>
+
+		<ul>
+			<li v-for="todo in todos">
+				<div v-if="editingTodo == todo">
+					<fieldset>
+						<legend>example1-child</legend>
+
+						<example1-child :todo="todo" :on-done="todoWasEdited">
+							<!-- 
+								by passing :todo="todo" we give the child 
+								the data to work on.
+
+								With :on-done we supply the child a way to inform the 
+								parent that we are done editing.
+							-->
+						</example1-child>
+
+					</fieldset>
+
+					Parent's version of todo:
+					<!-- We see that the parents version of the todo changes immediately 
+					 	 when editing it inside the child component.
+					-->
+					<pre>{{todo}}</pre>
+
+
+				</div>
+				<div v-else>
+					{{todo.title}} <a @click="editTodo(todo)">edit</a>
+				</div>
+
+			</li>
+		</ul>
+
+	</div>
+	<script>
+	var todos = [
+		{title: 'Todo 1'},
+		{title: 'Todo 2'},
+		{title: 'Todo 3'},
+	];
+	export default {
+		data() {
+			return {
+				todos: todos,
+				editingTodo: null
+			}
+		},
+		methods: {
+			editTodo(todoToEdit) {
+				this.editingTodo = todoToEdit
+			},
+
+			todoWasEdited(changedTodo) {
+				// reset this.
+
+				var index = this.todos.indexOf(this.editingTodo);
+
+				console.log("Updating todo: " + index);
+
+				// This also works... but Vue does not immediately react to this type of change.
+				// this.todos[index] = changedTodo;
+
+				// We copy the changedValues to our original item.
+				this.todos[index] = Object.assign(this.todos[index], changedTodo);
+
+				setTimeout(() => {
+					this.editingTodo = null;	
+				}, 5000);
+				
+			}
+		}
+	}
+	</script>
+</template>
+
+<template component="example1-child">
+	<div class="example1-child">	
+		<!-- a todo editor -->
+
+		Edit todo:
+		<input v-model="editTodo.title">
+		<button @click="doneEditing()">Done</button>
+
+
+	</div>
+	<script>
+	export default {
+		props: {
+			todo: {
+				type: Object,
+				required: true
+			},
+			onDone: {
+				type: Function,
+				required: true
+			}
+		},
+		data() {
+			/*
+			We want to demonstrate one-way data flow, 
+			so we take the prop supplied by the parent
+			and copy it here using Object.assign.
+
+			Note: this creates a shallow copy, if there is a 
+			key with an object in it, we should use something like lodash deepClone
+
+			If you want two-way editing, use v-model="todo.title", or remove the Object.assign here.
+
+			*/
+			return {
+				editTodo: Object.assign({}, this.todo)
+			}
+		},
+		methods: {
+			doneEditing(){
+				// let the parent know we are done editing.
+				this.onDone(this.editTodo)
+			}
+		}
+	}
+	</script>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+  --
+  -- EXAMPLE 2
+  -- 
+-->
+
+<template url="/example2" title="2. Events">
+	<div>
+		<p class="story">
+			Here, we supply the same todo editor, but we are going to 
+			let the parent and child communicate via events.
+		</p>
+
+		<example2-parent>
+		</example2-parent>
+
+	</div>
+
+</template>
+
+<template component="example2-parent">
+	<div class="example2-parent">
+		<h2>Todo's ({{todos.length}})</h2>
+
+		<ul>
+			<li v-for="todo in todos">
+				<div v-if="editingTodo == todo">
+					<fieldset>
+						<legend>example2-child</legend>
+
+						<example2-child :todo="todo" @todo-updated="todoWasEdited">
+							<!-- 
+								by passing :todo="todo" we give the child 
+								the data to work on.
+
+								We replace the :on-done="todoWasEdited" with an event-handler.
+
+								The difference is small, but at least this way we dont have to 
+								define a prop `onDone` and stuff.
+
+								We can write v-on:todo-updated and @todo-updated 
+
+								We can supply extra event data by writing 
+								`this.$emit('todo-updated', changedTodo)`
+								inside the child component.
+
+
+							-->
+						</example2-child>
+
+					</fieldset>
+
+					Parent's version of todo:
+					<!-- We see that the parents version of the todo changes immediately 
+					 	 when editing it inside the child component.
+					-->
+					<pre>{{todo}}</pre>
+
+
+				</div>
+				<div v-else>
+					{{todo.title}} <a @click="editTodo(todo)">edit</a>
+				</div>
+
+			</li>
+		</ul>
+
+	</div>
+	<script>
+	var todos = [
+		{title: 'Todo 1'},
+		{title: 'Todo 2'},
+		{title: 'Todo 3'},
+	];
+	export default {
+		data() {
+			return {
+				todos: todos,
+				editingTodo: null
+			}
+		},
+		methods: {
+			editTodo(todoToEdit) {
+				this.editingTodo = todoToEdit
+			},
+
+			todoWasEdited(changedTodo) {
+				// reset this.
+
+				console.log(changedTodo);
+
+				var index = this.todos.indexOf(this.editingTodo);
+
+				console.log("Updating todo: " + index);
+
+				// This also works... but Vue does not immediately react to this type of change.
+				// this.todos[index] = changedTodo;
+
+				// We copy the changedValues to our original item.
+				this.todos[index] = Object.assign(this.todos[index], changedTodo);
+
+				setTimeout(() => {
+					this.editingTodo = null;	
+				}, 5000);
+				
+			}
+		}
+	}
+	</script>		
+</template>
+
+<template component="example2-child">
+	<div class="example2-child">	
+		<!-- a todo editor -->
+
+		Edit todo:
+		<input v-model="editTodo.title">
+		<button @click="doneEditing()">Done</button>
+
+
+	</div>
+	<script>
+	export default {
+		props: {
+			todo: {
+				type: Object,
+				required: true
+			}
+		},
+		data() {
+			/*
+			We want to demonstrate one-way data flow, 
+			so we take the prop supplied by the parent
+			and copy it here using Object.assign.
+
+			Note: this creates a shallow copy, if there is a 
+			key with an object in it, we should use something like lodash deepClone
+
+			If you want two-way editing, use v-model="todo.title", or remove the Object.assign here.
+
+			*/
+			return {
+				editTodo: Object.assign({}, this.todo)
+			}
+		},
+		methods: {
+			doneEditing(){
+				// let the parent know we are done editing.
+				console.log("EMITING");
+				this.$emit('todo-updated', this.editTodo)
+			}
+		}
+	}
+	</script>
+</template>
+
+
+
+
+
+
+
+<!-- 
+  --
+  -- EXAMPLE 3
+  -- 
+-->
+<template url="/example3" title="3. Using a store">
+	<div>
+		<p class="story">
+			Coming soon..
+		</p>
+	</div>
+</template>
+
+
+
+
+
+
+
+
+<template component="poc-navigation">
+	<ul class="nav nav-tabs">
+		<li v-for="u in urls"> 
+			<router-link :to="u.url"><a class="nav">{{u.title}}</a></router-link>
+		</li>
+	</div>
+	<script>
+	function collectUrls() {
+		var urls = [];
+
+		$('template[url]').each(function () {
+			var url = this.getAttribute('url')
+			var title = this.getAttribute('title') || url.replace(/\//, ' ')
+
+			var explicitHide = this.getAttribute('poc-hide')
+			var dynamicParamsInUrl = url.indexOf(':') !== -1;
+
+			if (explicitHide > '' || dynamicParamsInUrl) {
+				return;
+			}
+
+			urls.push({url, title})
+
+		})
+
+		return urls
+
+	}
+	export default {
+		data() {
+			return {
+				urls: collectUrls() 
+			}
+		}
+	}
+	</script>	
+</template>
+</body>
+</html>

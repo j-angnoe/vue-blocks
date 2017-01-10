@@ -24,15 +24,15 @@
 	<div>Redirecting you to /nested</div>
 	<script>
 	export default { 
-		ready() { 
-			this.$router.go('/nested'); 
+		mounted() { 
+			this.$router.push('/nested'); 
 		} 
 	}
 	</script>
 </template>
 
 <template sub-url="/nested">
-	<p>Debug nested home</p>
+	<p>Nested home</p>
 </template>
 
 
@@ -42,8 +42,8 @@
 
 		<ul class="nav nav-tabs">
 			<li class="nav"><router-link to="/nested/">Home</router-link></li>
-			<li class="nav"><router-link to="/nested/page1">Page1</router-link></li>
-			<li class="nav"><router-link to="/nested/page2">Page2</router-link></li>
+			<li class="nav"><router-link to="/nested/page1">Nested page</router-link></li>
+			<li class="nav"><router-link to="/nested/page2">Another level of nesting</router-link></li>
 		</ul>	
 
 		Router view1:
@@ -53,28 +53,29 @@
 
 
 <template sub-url="/nested/page1">
-	<p>Debug nested page 1</p>
+	<p>nested page 1</p>
 </template>
 
 <template sub-url="/nested/page2">
 	<div>
-		<p>Debug nested page 2, met nog meer sub</p>
+		<p>Another level of nesting:</p>
 		Router view 2:
 
 		<ul class="nav nav-tabs">
-			<li class="nav"><router-link to="/nested/page2/page21">Home</a></li>
-			<li class="nav"><router-link to="/nested/page2/page22">Page1</a></li>
+			<li class="nav"><router-link to="/nested/page2">Page 2 home</a></li>
+			<li class="nav"><router-link to="/nested/page2/page21">Page 2.1</a></li>
+			<li class="nav"><router-link to="/nested/page2/page22">Page 2.2</a></li>
 		</ul>
 
 		<router-view>
-			Oets oets oets
+			<!-- the sub-url="/nested/page2" will be displayed here. -->
 		</router-view>
 	</div>
 </template>
 
 <template sub-url="/nested/page2">
 	<div>
-			Homepage voor 2.2
+		Home for /nested/page22	
 	</div>
 </template>
 

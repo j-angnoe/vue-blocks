@@ -47,7 +47,9 @@ function domComponentCollectorRaw() {
 
     		var matches = [];
 
-    		code.replace(/require\s*\(['"]([A-Za-z0-9\-\./]+)['"]\)/ig, (...match) => {
+            var require_regex = /require\s*\(['"]([A-Za-z0-9\-\./]+)['"]\)/ig; /* fix syntax highlight: ' */
+
+    		code.replace(require_regex, (...match) => {
     			matches.push(window[match[1]]);
     		});
     		
@@ -120,11 +122,19 @@ function domComponentCollector(componentName) {
     // Return a vue resolvable component definition.
     return function (resolve, reject) {
     	promise.then(object => {
-	    		
+	    	object.name = componentName
+
 	    	html = domCollectorStriptags(html);
 
             // Always wrap component name as class name for convenience.
 			object.template = html
+
+            if (object.ready) {
+                object.mounted = function () {
+                    console.error("Vue 2.0 migration warning: Replace ready function with mounted function in `" + componentName + "`");
+                    object.ready();
+                }
+            }
 
 		    if (object.props && props && props.length) {
 		        console.log("Error: export props and attribute props mixed at " + componentName + " definition.");
@@ -154,7 +164,7 @@ function loadVueComponents(context) {
 
 
 function collectRoutes(context, handled) {
-    var routes = {};
+    var routes = [];
     handled = handled || []
 
     var lookup = {};
@@ -178,14 +188,19 @@ function collectRoutes(context, handled) {
             }
         })
 
-        routeObject.component = domComponentCollector.call(this)
-        routes[url] = routeObject
+
+        var componentName = 'url-handler-' + url.replace(/^\//, 'index').replace(/[^a-z0-9_]/, '-');
+
+        routeObject.component = domComponentCollector.call(this, componentName)
+
+        routeObject.path = url;
+        routes.push(routeObject)
 
         handled.push(this);
 
-        routeObject.subRoutes = collectRoutes(this, handled);
+        routeObject.children = collectRoutes(this, handled);
 
-        lookup[url] = routes[url]
+        lookup[url] = routeObject
     })
 
     $('template[sub-url]',context).each(function () {
@@ -206,18 +221,19 @@ function collectRoutes(context, handled) {
             throw new Error('sub-url could not find parent for url `' + subUrl + '`');
         }
 
-        console.log("Found parent " + foundParent + " for sub url " + subUrl)
+        // console.log("Found parent " + foundParent + " for sub url " + subUrl)       
 
-        
-
-        if (!lookup[foundParent].subRoutes) {
-            lookup[foundParent].subRoutes = {}
+        if (!lookup[foundParent].children) {
+            lookup[foundParent].children = []
         }
 
-        lookup[foundParent].subRoutes[subUrl.substr(foundParent.length)] = {component: domComponentCollector.call(this) };
+        var childRelativeUrl = subUrl.substr(foundParent.length + 1);
+        var childComponent = {path: childRelativeUrl, component: domComponentCollector.call(this) };       
+
+        lookup[foundParent].children.push(childComponent)
 
         if (subUrl.substr(foundParent.length).length > 1 && !(subUrl in lookup)) {
-            lookup[subUrl] = lookup[foundParent].subRoutes[subUrl.substr(foundParent.length)]
+            lookup[subUrl] = childComponent;
         }
 
     })

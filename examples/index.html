@@ -31,10 +31,15 @@
 
 <!-- reusable components -->
 <template component="my-navigation">
-	<router-link to="/">Home</router-link>
-	<router-link to="/page1">Page 1</router-link>
-	<router-link to="/page2/with-param">Page 2</router-link>
+	<div class="navigation">
+		<router-link to="/">Home</router-link>
+		<router-link to="/page1">Page 1</router-link>
+		<router-link to="/page2/with-param">Page 2</router-link>
+	</div>
 </template>`,
+				
+
+
 				'two':`<!-- homepage -->
 <template url="/">
 	<div>Welcome to my awesome app</div>
@@ -49,6 +54,10 @@
 <template url="/page2/:param">
 	<div>Page 2: Param {{$route.params.param}}</div>
 </template>`,
+				
+
+
+
 				'three': `
 <template component="full-component-example">
 	<div class="full-component-example">
@@ -67,7 +76,7 @@
 				counter: 0
 			}
 		},
-		ready() {
+		mounted() {
 			console.log("Component is ready")
 		},
 		methods: {
@@ -79,19 +88,127 @@
 	</${'script'}>
 </template>
 `
+
+
+				,'component_tag': `<template component="my-component" props="prop1,prop2">
+  <div>
+    <p>Template for my-component</p>
+  </div>
+  <script>
+  export default() {
+    data() {
+      return {
+        value: ''
+      }
+    },
+    mounted() {
+      // ..
+    },
+    methods: {
+      myMethod() {
+        //..
+      }
+    }
+  }
+  </${'script'}>
+</template>
+`
+				,'component_source': `Vue.component('my-component', {
+  name: 'my-component',
+  template: \`<div>
+    <p>Template for my-component</p>
+  </div>\`,
+  props: ['prop1','prop2'],
+  data() {
+    return {
+      value: ''
+    }
+  },
+  mounted() {
+    // ..
+  },
+  methods: {
+    myMethod() {
+      //..
+    }
+  }  
+})
+`
+				,'url_tag': `<template url="/my-url">
+  <div>
+    <p>Template for my-url</p>
+  </div>
+  <script>
+  export default {
+    data() {
+      return {
+        value: ''
+      }
+    },
+    mounted() {
+      // ..
+    },
+    methods: {
+      myMethod() {
+        //..
+      }
+    }    
+  }
+  </${'script'}>
+</template>`
+		
+				,'url_source' : `var router = new VueRouter({
+  routes: [
+    {
+      path: '/my-url',
+      component: {
+        name: 'url-handler--my-url'
+        template: \`<div>
+          <p>Template for my-url</p>
+        </div>\`,
+        data() {
+          return {
+            value: ''
+          }
+        },
+        mounted() {
+          // ..
+        },
+        methods: {
+          myMethod() {
+            //..
+          }
+        }  
+      }
+    }
+  ]
+})
+
+var rootInstance = new Vue({
+  router: router
+}).$mount('app')
+				`
+
+
+
+
 			}
 			</script>
 		</template>
 	
 		<template component="app">
-			<nav>
-			<ul class="nav nav-tabs">
-				<li class=""><router-link to="/">Start</router-link></li>
-				<li class=""><router-link to="/try-it">Try it!</router-link></li>
-			</ul>
-			</nav>
+			<div class="appp">
+				<nav>
+				<ul class="nav nav-tabs">
+					<li class=""><router-link to="/">Start</router-link></li>
+					<li class=""><router-link to="/try-it">Try it!</router-link></li>
+					<li class=""><a href="nested-routes.html" target="_blank">Nested routes</a></li>
+					<li class=""><a href="inter-component-communication.html" target="_blank">Component communication</a></li>
+				</ul>
+				</nav>
 
-			<router-view></router-view>
+				<router-view></router-view>
+			</div>
 
 		</template>
 
@@ -106,44 +223,68 @@
 
 				<p>
 				1. Define components<br>
-				<pre>{{code_snippet1}}</pre>
+				<pre>{{snippets.one}}</pre>
 				</p>
 
 				<p>
 				2. Define your routes<br>
-				<pre>{{code_snippet2}}</pre>
+				<pre>{{snippets.two}}</pre>
 				</p>
 
 				<p>3. Build the future web!
 				</p>
 
+
+
+
 				<h2>Components</h2>
 
 				<p>Each component is defined inside a &lt;template component&gt; tag. Inside this tag you may write html and a script-tag containing the component code. 
 
-				<pre>{{code_snippet3}}</pre>
+				<pre>{{snippets.three}}</pre>
 
 
 				</p>
+
+				<h2>In other words:</h2>
+
+				<table class="table">
+					<tr>
+						<td style="width:40%">
+							<pre>{{snippets.component_tag}}</pre>
+						</td>
+						<td style="text-align:center;vertical-align:middle;font-size:40px;">
+							&#8594;
+						</td>
+						<td style="width:40%">
+							<pre>{{snippets.component_source}}</pre>
+						</td>
+					</tr>
+
+					<tr>
+						<td style="width:40%">
+							<pre>{{snippets.url_tag}}</pre>
+						</td>
+						<td style="text-align:center;vertical-align:middle;font-size:40px;">
+							&#8594;
+						</td>
+						<td style="width:40%">
+							<pre>{{snippets.url_source}}</pre>
+						</td>
+					</tr>
+
+				</table>
+
+
 
 				<h2>Why?</h2>
 				<p>Vue blocks was developed to quickly build single page prototypes.</p>
 
 				<h2>What's in it?</h2>
 				<ul>
-					<li>Vue 1</li>
-					<li>Vue Router 0.7</li>
+					<li>Vue 2.1.8</li>
+					<li>Vue Router 2.1.1</li>
 				</ul>
-				<!-- 
-					<div class="row">
-						<div class="col-sm-6">
-						left
-						</div>
-						<div class="col-sm-6">
-						right
-						</div>
-					</div>
-				-->
 
 				<h2>Undocumented subjects</h2>
 				<p><ul>
@@ -156,11 +297,12 @@
 			var snippets = require('snippets');
 
 			export default {
+				mounted() {
+					
+				},
 				data() {
 					return {
-						code_snippet1: snippets.one,
-						code_snippet2: snippets.two,
-						code_snippet3: snippets.three
+						snippets: snippets
 					}
 				}
 			}
@@ -236,7 +378,7 @@
 </html>`;
 					}, 
 
-					ready() {
+					mounted() {
 
 					},
 
