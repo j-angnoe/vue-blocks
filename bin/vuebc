@@ -1,0 +1,303 @@
+#!/usr/bin/env node
+
+var cheerio = require('cheerio');
+
+const OUTPUT_DIRECTORY = process.cwd() + "/../tmp";
+
+const VUEIFY = true;
+const MINIFY = true;
+
+var browserify = require('browserify');
+var vueify = require('vueify');
+var uglifyify = require('uglifyify');
+var fs = require('fs');
+
+
+
+var $;
+
+
+function removeTabs(string) {
+	var startingSpaces = string.split("\n").map(function countStartingSpacesAndTabs(line) {
+		var match = line.match(/^(\s|\t)+/);
+
+		return match && match[0].length || 0;
+	}).filter(function removeZeroes(num) {
+		return num > 0;
+	})
+
+
+	var minimumStartingSpace = Math.min(...startingSpaces);
+	var minimumSpaceSelector = new RegExp('^(\\s|\\t){1,' + minimumStartingSpace + "}", 'gm');
+
+	return string.replace(minimumSpaceSelector, '');
+}
+
+function readInput() {
+	var stream = process.stdin;
+	var buffer = "";
+
+	return new Promise(resolve => {
+
+		process.stdin.on('data', chunk => {
+			buffer += chunk.toString();
+		})
+
+		process.stdin.on('end', done => {
+
+			resolve(buffer);
+		})
+	})
+}
+
+function escapeBackTicks(string) {
+	return string.replace(/\`/gm, '\\\`');
+}
+
+function extractComponent(domElement) {
+
+	var module = $('script:not([src])', domElement).remove().html() || 'export default {}' + "\n";
+	var template = $(domElement).html() || '';
+	var styles = $('style', domElement).remove().html() || '';
+
+	return {
+		module,
+		template,
+		styles
+	}
+}
+function compileTemplates(input) {
+	try { 
+	$ = cheerio.load(input)
+
+	var outputFiles = [];
+	var components = [];
+
+	outputAsJsModule.extension = '.js';
+	outputAsJsModule.bootstrapApplication = `
+var App = new Vue({
+	router: router,
+}).$mount('app')
+	`
+	outputAsJsModule.requireVue = 'vue/dist/vue';
+
+
+	outputAsVueFile.extension = '.vue';
+	outputAsVueFile.requireVue = 'vue';
+
+	outputAsVueFile.bootstrapApplication = `
+new Vue({
+  el: 'app',
+  render: function (createElement) {
+    return createElement(require("./app.vue"))
+  },
+  router: router
+})
+	`;
+
+	var outputter;
+	outputter = VUEIFY ? outputAsVueFile : outputAsJsModule;
+
+
+	$('template[component]').each(function () {
+		var componentName = $(this).attr('component');
+
+		console.log("Found component " + componentName);
+
+		var component = extractComponent(this);
+
+		component.name = componentName
+
+
+		outputFiles.push({
+			path: componentName + outputter.extension,
+			content: outputter(component)
+		})
+
+		components.push({
+			name: componentName,
+			path: componentName + outputter.extension
+		})
+
+		//console.log("Component module: " + outputAsVueFile());
+
+		// console.log("Component Template: " + componentTemplate);
+		// console.log(this);
+
+		$(this).remove();
+	})
+
+	var routes = [];
+
+
+	$('template[url]').each(function () {
+		var path = $(this).attr('url');
+		console.log("Found url " + path);
+
+		var componentName = 'url-' + path.replace(/[^0-9a-zA-Z]/g,'-');
+
+		var component = extractComponent(this);
+
+		var route = {
+			path,
+			component: componentName
+		};
+
+		outputFiles.push({
+			path: componentName + outputter.extension,
+			content: outputter(component)
+		})
+		routes.push(route);
+
+		$(this).remove();
+	})
+
+	// create router file:
+	outputFiles.push({
+		path: 'routes.js',
+		content: 
+`module.exports = [
+${routes.map(route => {
+	return `	{
+		"path": "${route.path}",
+		"component" : require("./${route.component}.vue")
+	}`
+})}
+]
+`
+	
+	})
+
+
+	// create javascript entry-point.
+	outputFiles.push({
+
+		path: 'index.js',
+		content: 
+`
+var Vue = require('${outputter.requireVue}');
+var VueRouter = require('vue-router');
+
+Vue.use(VueRouter);
+
+var routes = require('./routes');
+
+var router = new VueRouter({routes: routes});
+
+${components.map(comp => {
+	return `Vue.component("${comp.name}", require("./${comp.path}"))`
+}).join("\n")}
+
+${outputter.bootstrapApplication}
+
+
+
+
+`
+	})
+
+
+	// replace script src vue-blocks with script src build:
+	$('script[src]').each(function () {
+		if ($(this).attr('src').match('vue-blocks')) {
+			$(this).remove();
+		}
+	})
+	$('body').append('<script src="build.js"></' + "script>")
+	// write cleaned up html:
+
+	outputFiles.push({
+		path: 'index.html',
+		content: $('html').html()
+
+	})
+
+
+
+	function outputAsJsModule(component) {
+		return removeTabs(component.module).replace("export default", 'module.exports = ') + 
+			('name' in component ? `module.exports.name = "${component.name}";\n` : '') +
+			'module.exports.template = `' + escapeBackTicks(removeTabs(component.template)) + '`';
+
+	}
+
+
+	function outputAsVueFile(component) {
+		var componentStylesWithTag = component.styles ? `<style>\n${componentStyles}\n</style>` : '';
+
+		return `<template>
+${component.template}
+</template>
+${componentStylesWithTag}
+<script>
+${component.module}
+</${'script'}>`
+	}
+
+	
+
+
+	return outputFiles
+
+	} catch (exception) {
+		console.log(exception);		
+	}
+}
+
+
+
+function saveFiles(files) {
+
+	var results = files.map(file => {
+		return new Promise((resolve, reject) => {
+			fs.writeFile(OUTPUT_DIRECTORY + '/' + file.path, file.content, function callback(error, success) {
+				if (error) return reject(error);
+				resolve(success);
+			});
+		})
+
+		return 
+	})
+
+	return Promise.all(results);
+}
+
+
+
+readInput().then(compileTemplates, reportError).then(outputFiles => {
+	// console.log(outputFiles)
+	console.log("--------------------");
+
+	saveFiles(outputFiles).then(success => {
+		console.log("Written " + success.length + " files.");
+
+		var bundle = browserify(OUTPUT_DIRECTORY + '/index.js')
+
+		if (VUEIFY) {
+			bundle = bundle.transform(vueify)
+		}
+
+		if (MINIFY) {
+			bundle = bundle.transform({global:true}, uglifyify)
+		}
+
+		bundle 
+			.bundle()
+			.pipe(fs.createWriteStream(OUTPUT_DIRECTORY + '/build.js'))
+
+			/* dont now when browserify is ready with processing..?
+			.on('bundle', done => {
+				console.log("Written bundle to " + OUTPUT_DIRECTORY + '/build.js')
+			})
+			*/
+
+	}, error => {
+		console.log("Error writing files.");
+		console.log(error);
+	})
+}, reportError).catch(reportError)
+
+
+function reportError(error) {
+	throw error;
+}

@@ -7,14 +7,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify ./index.js > dist/vue-blocks.js"
   },
-  "repository": { 
-    "type": "git"
-    , "url" : "https://github.com/j-angnoe/vue-blocks"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/j-angnoe/vue-blocks"
   },
   "author": "Joshua Angnoe",
   "license": "ISC",
   "dependencies": {
     "vue": "^2.1.8",
     "vue-router": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "browserify": "^13.3.0",
+    "cheerio": "^0.22.0",
+    "uglifyify": "^3.0.4",
+    "vueify": "^9.4.0"
   }
 }

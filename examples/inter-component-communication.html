@@ -15,18 +15,19 @@
 
 	<body>
 
+		<!-- app mount point -->
+		<app></app>
+	
+
+<template component="app">
+	<div class="app">
 		<div class="container">
 			<header>
 				<h1>Vue blocks</h1>
 			</header>
-			<!-- app mount point -->
-			<app></app>
+			<poc-navigation></poc-navigation>
+			<router-view></router-view>
 		</div>
-
-<template component="app">
-	<div class="app">
-		<poc-navigation></poc-navigation>
-		<router-view></router-view>
 	</div>	
 </template>
 
@@ -405,31 +406,34 @@
 		</li>
 	</div>
 	<script>
-	function collectUrls() {
-		var urls = [];
 
-		$('template[url]').each(function () {
-			var url = this.getAttribute('url')
-			var title = this.getAttribute('title') || url.replace(/\//, ' ')
-
-			var explicitHide = this.getAttribute('poc-hide')
-			var dynamicParamsInUrl = url.indexOf(':') !== -1;
-
-			if (explicitHide > '' || dynamicParamsInUrl) {
-				return;
-			}
-
-			urls.push({url, title})
-
-		})
-
-		return urls
-
-	}
 	export default {
 		data() {
+			console.log(this.$router);
 			return {
-				urls: collectUrls() 
+				urls: this.collectUrls() 
+			}
+		},
+		methods: {
+			collectUrls() {
+				var urls = [];
+
+				this.$router.options.routes.forEach(route => {
+					var url = route.path;
+					var title = route.title || url.replace(/\//, ' ')
+
+					var explicitHide = route['poc-hide'];
+					var dynamicParamsInUrl = url.indexOf(':') !== -1;
+
+					if (explicitHide > '' || dynamicParamsInUrl) {
+						return;
+					}
+
+					urls.push({url, title})
+
+				})
+
+				return urls
 			}
 		}
 	}
