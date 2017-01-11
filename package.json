@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify ./index.js > dist/vue-blocks.js",
-    "watch" : "fsmonitor '+*.js' '!dist/*.js' npm run build"
-
+    "watch": "fsmonitor '+*.js' '!dist/*.js' npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,6 +25,7 @@
     "browserify": "^13.3.0",
     "cheerio": "^0.22.0",
     "uglifyify": "^3.0.4",
-    "vueify": "^9.4.0"
+    "vueify": "^9.4.0",
+    "yargs": "^6.6.0"
   }
 }

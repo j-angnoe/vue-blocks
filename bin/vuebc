@@ -2,17 +2,20 @@
 
 var cheerio = require('cheerio');
 
-const OUTPUT_DIRECTORY = process.cwd() + "/../tmp";
+var OUTPUT_DIRECTORY;
+var INPUT_DIRECTORY;
 
 const VUEIFY = true;
-const MINIFY = true;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const MINIFY = IS_PRODUCTION;
 
-var browserify = require('browserify');
-var vueify = require('vueify');
-var uglifyify = require('uglifyify');
-var fs = require('fs');
+var browserify = require('browserify'); // js bundler
+var vueify = require('vueify'); // compile vue files
+var uglifyify = require('uglifyify'); // javascript minification
+var fs = require('fs'); 
 
-
+var yargs = require('yargs'); // cli arguments and usage
+var path = require('path'); // for path join
 
 var $;
 
@@ -83,7 +86,13 @@ var App = new Vue({
 
 
 	outputAsVueFile.extension = '.vue';
-	outputAsVueFile.requireVue = 'vue';
+
+	if (IS_PRODUCTION) {
+		outputAsVueFile.requireVue = 'vue/dist/vue.runtime.min';
+	} else {
+		// vue runtime, development mode
+		outputAsVueFile.requireVue = 'vue';
+	}
 
 	outputAsVueFile.bootstrapApplication = `
 new Vue({
@@ -127,6 +136,28 @@ new Vue({
 		$(this).remove();
 	})
 
+	$('template[src]').each(function () {
+		var url = $(this).attr('src')
+        if (url.match(/\.vue$/)) {
+            var componentName = url.split('/').pop().replace('.vue','');
+
+            console.log("Found vue file for " + componentName);
+            components.push({
+            	name: componentName,
+            	path: componentName + outputter.extension
+            })
+
+            outputFiles.push({
+				path: componentName + outputter.extension,
+				content: fs.readFileSync(path.join(INPUT_DIRECTORY, url))
+            })
+
+        	// the url must be loaded
+        	//outputFiles.push({
+        	//	path: ''
+        	//})
+        }
+	})
 	var routes = [];
 
 
@@ -168,6 +199,8 @@ ${routes.map(route => {
 	
 	})
 
+	var VUE_ROUTER = IS_PRODUCTION ? 'vue-router/dist/vue-router.min' : 'vue-router';
+
 
 	// create javascript entry-point.
 	outputFiles.push({
@@ -176,7 +209,7 @@ ${routes.map(route => {
 		content: 
 `
 var Vue = require('${outputter.requireVue}');
-var VueRouter = require('vue-router');
+var VueRouter = require('${VUE_ROUTER}');
 
 Vue.use(VueRouter);
 
@@ -250,7 +283,8 @@ function saveFiles(files) {
 
 	var results = files.map(file => {
 		return new Promise((resolve, reject) => {
-			fs.writeFile(OUTPUT_DIRECTORY + '/' + file.path, file.content, function callback(error, success) {
+			fs.writeFile(path.join(OUTPUT_DIRECTORY,file.path), file.content, function callback(error, success) {
+				if (error) console.log("Error at " + file.path)
 				if (error) return reject(error);
 				resolve(success);
 			});
@@ -262,42 +296,66 @@ function saveFiles(files) {
 	return Promise.all(results);
 }
 
-
-
-readInput().then(compileTemplates, reportError).then(outputFiles => {
-	// console.log(outputFiles)
-	console.log("--------------------");
-
-	saveFiles(outputFiles).then(success => {
-		console.log("Written " + success.length + " files.");
-
-		var bundle = browserify(OUTPUT_DIRECTORY + '/index.js')
-
-		if (VUEIFY) {
-			bundle = bundle.transform(vueify)
-		}
-
-		if (MINIFY) {
-			bundle = bundle.transform({global:true}, uglifyify)
-		}
-
-		bundle 
-			.bundle()
-			.pipe(fs.createWriteStream(OUTPUT_DIRECTORY + '/build.js'))
-
-			/* dont now when browserify is ready with processing..?
-			.on('bundle', done => {
-				console.log("Written bundle to " + OUTPUT_DIRECTORY + '/build.js')
-			})
-			*/
-
-	}, error => {
-		console.log("Error writing files.");
-		console.log(error);
-	})
-}, reportError).catch(reportError)
-
-
 function reportError(error) {
 	throw error;
 }
+
+function main() {
+	var argv = yargs.usage("$0 [file] [-o output]").argv;
+
+	var file = argv._[0];
+	INPUT_DIRECTORY = path.dirname(file);
+	OUTPUT_DIRECTORY = argv.o;
+
+	if (!fs.existsSync(file)) {
+		return console.log("File not found: " + file);
+	}
+	if (!fs.existsSync(file)) {
+		return console.log("Output directory not found: " + OUTPUT_DIRECTORY);
+	}
+
+	fs.readFile(file, function (err, file) {
+		if (err) {
+			return console.log("Error" + err);
+		}
+		Promise.resolve(file).then(compileTemplates).then(outputFiles => {
+			// console.log(outputFiles)
+			console.log("--------------------");
+
+			saveFiles(outputFiles).then(success => {
+				console.log("Written " + success.length + " files.");
+
+				var bundle = browserify('index.js', {
+					basedir: OUTPUT_DIRECTORY
+				})
+
+				if (VUEIFY) {
+					bundle = bundle.transform(vueify)
+				}
+
+				if (MINIFY) {
+					bundle = bundle.transform({global:true}, uglifyify)
+				}
+
+				bundle 
+					.bundle()
+					.pipe(fs.createWriteStream(path.join(OUTPUT_DIRECTORY, 'build.js')))
+
+					/* dont now when browserify is ready with processing..?
+					.on('bundle', done => {
+						console.log("Written bundle to " + OUTPUT_DIRECTORY + '/build.js')
+					})
+					*/
+
+			}, error => {
+				console.log("Error writing files.");
+				console.log(error);
+			})
+		}, reportError).catch(reportError)
+	});
+
+}
+
+main();
+
+
