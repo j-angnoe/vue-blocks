@@ -159,8 +159,39 @@ function loadVueComponents(context) {
         Vue.component(componentName, object);           
     });
 
+    loadVueFiles();
 }
 
+function loadVueFiles(context) {
+    var components = $('template[src]', context).get();
+
+    components.forEach(function(comp) {
+        var url = comp.getAttribute('src');
+
+        if (url.match(/\.vue$/)) {
+            var componentName = url.split('/').pop().replace('.vue','');
+
+            // console.log(componentName);
+
+            Vue.component(componentName, function(resolve, reject) {
+                $.get(url).then(source => {
+
+                    // console.log(source);
+                    source = source.replace(/<\/?template.*?>/g,'')
+
+                    source = '<template>' + source + '</template>';
+
+                    var object = domComponentCollector.call($(source)[0], componentName);
+
+                    object(resolve);
+
+                    // console.log(object.toString());
+                })
+            })
+            
+        }
+    })
+}
 
 
 function collectRoutes(context, handled) {
