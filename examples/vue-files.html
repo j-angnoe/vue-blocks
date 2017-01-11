@@ -22,14 +22,17 @@
 
 			<template url="/">
 				<div>
-					Component:
-					<example-vue-file></example-vue-file>
-					<example1-parent></example1-parent>
+					Vue files can be loaded externally via &lt;template src="*.vue"&gt;&lt;/template&gt;:
+					<br>
+					<br>
+					<div style="border:2px solid black;padding:10px;">
+						<example-vue-file></example-vue-file>
+					</div>
+					
 				</div>
 			</template>
 
-			<template src="../tmp/example1-parent.vue"></template>
-			<template src="../tmp/example1-child.vue"></template>
+			
 			<template src="example-vue-file.vue"></template>
 
 		</div>
