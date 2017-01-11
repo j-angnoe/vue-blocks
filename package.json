@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify ./index.js > dist/vue-blocks.js"
+    "build": "browserify ./index.js > dist/vue-blocks.js",
+    "watch" : "fsmonitor '+*.js' '!dist/*.js' npm run build"
+
   },
   "repository": { 
     "type": "git"
