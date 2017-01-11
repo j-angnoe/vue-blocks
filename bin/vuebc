@@ -157,6 +157,9 @@ new Vue({
         	//	path: ''
         	//})
         }
+        
+		$(this).remove();
+
 	})
 	var routes = [];
 
