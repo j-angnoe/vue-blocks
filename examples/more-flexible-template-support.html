@@ -1,0 +1,63 @@
+<html>
+	<head>
+		<title>Vue Blocks Framework</title>
+		<script src="//unpkg.com/jquery@3.1.1/dist/jquery.min.js"></script>
+		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<!-- <script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script> -->
+
+		<script src="../dist/vue-blocks.js"></script>
+	</head>
+	<body>
+
+		<div class="container">
+			<header>
+				<h1>Vue blocks</h1>
+			</header>
+			<!-- app mount point -->
+			<app></app>
+		</div>
+
+		<template src="examples-navigation.vue"></template>
+
+		<template component="app">
+
+			<div class="app">
+				<examples-navigation></examples-navigation>
+				
+				<h1>Demo 1:</h1>
+				<demo-one></demo-one>
+
+				<h2>Demo 2:</h2>
+				<demo-two></demo-two>
+			</div>
+		</template>
+
+
+		<template component="demo-one">
+			<script type="text/template">
+				<div>
+					<p>Demonstrate support for contained &lt;script type="text/template"&gt; </p>
+					<p>This is usefull for when working with table/tr/td and intermixed with vue components.</p>
+					<p v-if="value == 'value1'">Everything is working</p>
+					<p v-else>It's not working properly.</p>
+				</div>
+			</script>
+			<script>
+			export default {
+				data() {
+					return {value: 'value1'}
+				}
+			}
+			</script>
+		</template>
+
+		<template component="demo-two">
+			<p>You should not see this template</p>
+			<script>
+				export default {
+					template: `<div>I've got a template defined as javascript string. It's working OK.</div>`
+				}
+			</script>
+		</template>
+	</body>
+</html>

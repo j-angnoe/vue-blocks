@@ -37,7 +37,7 @@ function loadModules(context) {
  **/
 function domComponentCollectorRaw() {
     var template = this.content;
-    var script = template.querySelector('script:not([src])');   
+    var script = template.querySelector('script:not([src]):not([type^="text"])');   
     var loadScripts = template.querySelectorAll('script[src]');   
 
     var getObject = function () {
@@ -116,7 +116,18 @@ function domComponentCollector(componentName) {
     var promise = domComponentCollectorRaw.call(this);
 
 	var props = (this.getAttribute('props')||'').split(/\s?,\s?/).filter(Boolean);
-    var html = this.innerHTML;
+
+
+    var html;
+
+    // support one script type="text/template" support.
+    var containedTemplate = this.content.querySelector('script[type="text/template"]');
+
+    if (containedTemplate) {
+        html = containedTemplate.innerHTML;
+    } else {
+        html = this.innerHTML;
+    }
 
 
     // Return a vue resolvable component definition.
@@ -126,8 +137,14 @@ function domComponentCollector(componentName) {
 
 	    	html = domCollectorStriptags(html);
 
-            // Always wrap component name as class name for convenience.
-			object.template = html
+            if (object.template) {
+                if (html > '') {
+                    console.log("Warning: " + componentName + " has both a two template definitions. The javascript template is selected.")
+                }
+            } else {
+               // Always wrap component name as class name for convenience.
+	   		   object.template = html
+            }
 
             if (object.ready) {
                 object.mounted = function () {
