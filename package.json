@@ -17,5 +17,8 @@
   "dependencies": {
     "vue": "^2.1.8",
     "vue-router": "^2.1.1"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3"
   }
 }
