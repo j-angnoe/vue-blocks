@@ -4,13 +4,13 @@ var loadVueComponents = vuecf.loadVueComponents
 var collectRoutes = vuecf.collectRoutes
 var Vue = require('vue/dist/vue')
 var VueRouter = require('vue-router')
+Vue.use(VueRouter)
 
 // Start the application application
 document.addEventListener('DOMContentLoaded', done => {
     loadModules()
     loadVueComponents()
 
-    Vue.use(VueRouter)
 
     var routes = collectRoutes();
     var router = new VueRouter({
