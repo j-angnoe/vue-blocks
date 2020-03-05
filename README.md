@@ -3,8 +3,6 @@
 Please review the examples/index.html, or check it out online: http://fluxfx.nl/vue-blocks/examples/
 
 dist/vue-blocks.js bundles Vue 2.1.8 and Vue router 2.1.1. 
-When including vue-blocks make sure you have jQuery (3+) available.
-
 
 # Quick start:
 
@@ -12,7 +10,6 @@ When including vue-blocks make sure you have jQuery (3+) available.
 <html>
 	<head>
 		<title>Vue Blocks Framework</title>
-		<script src="//unpkg.com/jquery@3.1.1/dist/jquery.min.js"></script>
 		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 		<script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script>
 	</head>

@@ -1,12 +1,12 @@
 {
   "name": "vue-blocks",
-  "version": "0.1.6",
+  "version": "0.2",
   "description": "Vue Blocks Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify ./index.js > dist/vue-blocks.js",
-    "watch": "fsmonitor '+*.js' '!dist/*.js' npm run build"
+    "build": "parcel build ./index.js -o dist/vue-blocks.js --no-source-maps",
+    "watch": "parcel watch ./index.js -o dist/vue-blocks.js --no-hmr --no-source-maps"
   },
   "repository": {
     "type": "git",
@@ -15,10 +15,10 @@
   "author": "Joshua Angnoe",
   "license": "ISC",
   "dependencies": {
-    "vue": "^2.1.8",
-    "vue-router": "^2.1.1"
+    "vue": "^2.6.11",
+    "vue-router": "^2.8.1"
   },
   "devDependencies": {
-    "browserify": "^16.2.3"
+    "parcel-bundler": "*"
   }
 }

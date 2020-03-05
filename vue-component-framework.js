@@ -10,9 +10,11 @@
  * Maakt gebruik van de domComponentCollector.
  **/
 function loadModules(context) {
-    var modules = $('template[module]', context).get();
+    context = context || document;
 
-    modules.forEach(function (comp) {
+    var modules = context.querySelectorAll('template[module]');
+
+    [...modules].forEach(function (comp) {
 
         var moduleName = comp.getAttribute('module');
         var object = domComponentCollectorRaw.call(comp);
@@ -22,7 +24,7 @@ function loadModules(context) {
         	window[moduleName] = object;
         })
 
-        $(domCollectorStriptags(comp.innerHTML)).appendTo('body');
+        document.body.innerHTML += domCollectorStriptags(comp.innerHTML);
     });
 }
 
@@ -31,10 +33,11 @@ function loadModules(context) {
  * to extract application pieces from the supplied document.
  *
  * Rules:
- * <script src=""> are loaded via jQuery.getScript to prevent deprecated synchronous loading in main thread. 
+ * <script src=""> are loaded via fetch to prevent deprecated synchronous loading in main thread. 
  * <link rel="Stylesheets"> works
  * <script> tags are may do export default { }
  **/
+
 function domComponentCollectorRaw() {
     var template = this.content;
     var script = template.querySelector('script:not([src]):not([type^="text"])');   
@@ -75,7 +78,7 @@ function domComponentCollectorRaw() {
 	            // alert("Load " + script.getAttribute('src'));
 	            
 	            var url = script.getAttribute('src');
-	            p = p.then(res => { return $.getScript(url) }).then(x => {
+	            p = p.then(res => { return fetch(url).then(r => r.text()) }).then(x => {
 	            	//console.log("Loaded " + url);
 	            })
 	        })  
@@ -129,7 +132,6 @@ function domComponentCollector(componentName) {
         html = this.innerHTML;
     }
 
-
     // Return a vue resolvable component definition.
     return function (resolve, reject) {
     	promise.then(object => {
@@ -166,8 +168,8 @@ function domComponentCollector(componentName) {
 
 
 function loadVueComponents(context) {
-
-    var components = $('template[component]', context).get();
+    context = context || document;
+    var components = [...context.querySelectorAll('template[component]')];
 
     components.forEach(function (comp) {
         var componentName = comp.getAttribute('component');
@@ -180,7 +182,8 @@ function loadVueComponents(context) {
 }
 
 function loadVueFiles(context) {
-    var components = $('template[src]', context).get();
+    context = context || document;
+    var components = [...context.querySelectorAll('template[src]')];
 
     components.forEach(function(comp) {
         var url = comp.getAttribute('src');
@@ -191,19 +194,18 @@ function loadVueFiles(context) {
             // console.log(componentName);
 
             Vue.component(componentName, function(resolve, reject) {
-                $.get(url).then(source => {
-
+                fetch(url).then(r => r.text()).then(source => {
                     // console.log(source);
                     source = source.replace(/<\/?template.*?>/g,'')
+                    // source =  '<template>' + source + '</template>';
+                    var el = document.createElement('template');
+                    el.innerHTML = source;
 
-                    source = '<template>' + source + '</template>';
-
-                    var object = domComponentCollector.call($(source)[0], componentName);
+                    var object = domComponentCollector.call(el, componentName);
 
                     object(resolve);
 
-                    // console.log(object.toString());
-                })
+                });
             })
             
         }
@@ -216,17 +218,17 @@ function collectRoutes(context, handled) {
     handled = handled || []
 
     var lookup = {};
-
-    $('template[url]',context).each(function () {
+    context = context || document;
+    [...context.querySelectorAll('template[url]')].forEach(function (el) {
         if (handled.indexOf(this) !== -1) {
             //already handled.
             return;
         }
-        var url = this.getAttribute('url');       
+        var url = el.getAttribute('url');       
 
         var routeObject = {}
-        $.each(this.attributes, (key, value) => {
-            // skip url
+        for (let key in el.attributes) {
+            let value = el.attributes[key];
             if (value.nodeName && value.nodeValue && (value.nodeName !== 'url')) {
                 if (value.nodeValue.match(/true|false/i)) {
                     routeObject[value.nodeName] = !!value.nodeValue.match(/true/i)
@@ -234,26 +236,25 @@ function collectRoutes(context, handled) {
                     routeObject[value.nodeName] = value.nodeValue
                 }
             }
-        })
-
+        }
 
         var componentName = 'url-handler-' + url.replace(/^\//, 'index').replace(/[^a-z0-9_]/, '-');
 
-        routeObject.component = domComponentCollector.call(this, componentName)
+        routeObject.component = domComponentCollector.call(el, componentName)
 
         routeObject.path = url;
         routes.push(routeObject)
 
-        handled.push(this);
+        handled.push(el);
 
-        routeObject.children = collectRoutes(this, handled);
+        routeObject.children = collectRoutes(el, handled);
 
         lookup[url] = routeObject
-    })
+    });
 
-    $('template[sub-url]',context).each(function () {
+    [...context.querySelectorAll('template[sub-url]')].forEach(function (el) {
 
-        var subUrl = this.getAttribute('sub-url');
+        var subUrl = el.getAttribute('sub-url')
         var foundParent = false
         
         var parentUrl;
@@ -276,7 +277,7 @@ function collectRoutes(context, handled) {
         }
 
         var childRelativeUrl = subUrl.substr(foundParent.length + 1);
-        var childComponent = {path: childRelativeUrl, component: domComponentCollector.call(this) };       
+        var childComponent = {path: childRelativeUrl, component: domComponentCollector.call(el) };       
 
         lookup[foundParent].children.push(childComponent)
 

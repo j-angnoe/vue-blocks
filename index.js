@@ -3,7 +3,7 @@ var loadModules = vuecf.loadModules
 var loadVueComponents = vuecf.loadVueComponents
 var collectRoutes = vuecf.collectRoutes
 var Vue = require('vue/dist/vue')
-var VueRouter = require('vue-router')
+var VueRouter = require('vue-router').default
 Vue.use(VueRouter)
 
 // Start the application application
