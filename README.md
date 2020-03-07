@@ -1,6 +1,6 @@
 # Vue Blocks
 
-Please review the examples/index.html, or check it out online: http://fluxfx.nl/vue-blocks/examples/
+Please review the examples/index.html, or check it out online: http://fluxfx.nl/vue-blocks/examples/index.html
 
 dist/vue-blocks.js bundles Vue 2.1.8 and Vue router 2.1.1. 
 
