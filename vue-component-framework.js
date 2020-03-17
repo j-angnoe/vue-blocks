@@ -120,11 +120,21 @@ function domComponentCollector(componentName) {
 
 	var props = (this.getAttribute('props')||'').split(/\s?,\s?/).filter(Boolean);
 
-
+    var scopedStyle = '';
     var html;
 
     // support one script type="text/template" support.
     var containedTemplate = this.content.querySelector('script[type="text/template"]');
+    [...this.content.querySelectorAll('style')].forEach(s => {
+        
+        if (s.hasAttribute('scoped')) { 
+            s.parentNode.removeChild(s);
+            scopedStyle += s.innerHTML;
+        } else {
+            document.head.appendChild(s);
+        }
+    });
+
 
     if (containedTemplate) {
         html = containedTemplate.innerHTML;
@@ -132,12 +142,31 @@ function domComponentCollector(componentName) {
         html = this.innerHTML;
     }
 
+    if (scopedStyle) {
+        scopedStyle = scopedStyle.replace(/([^\}]+?)\{/g, (full, selectors) => {
+            if (full.match(/^\s*@/)) {
+                return full;
+            }
+            return selectors.split(',').map(x => {
+                // :scope will point to self.
+                return '*[scoped-css-' + componentName + '] ' + x.replace(':scope', '').replace(/^\s+/,'');
+            }).join(',') + '{';
+        });
+        console.log(scopedStyle, 'scoped Style');
+        var scopedStyleElem = document.createElement('style');
+        scopedStyleElem.innerHTML = scopedStyle;
+        document.head.append(scopedStyleElem);
+    }
     // Return a vue resolvable component definition.
     return function (resolve, reject) {
     	promise.then(object => {
-	    	object.name = componentName
+	    	object.name = componentName;
 
 	    	html = domCollectorStriptags(html);
+
+            html = html.replace(/([^<]+?)>/, (n,pre) => {
+                return pre + ' scoped-css-'+componentName+'>';
+            });
 
             if (object.template) {
                 if (html > '') {
@@ -145,7 +174,7 @@ function domComponentCollector(componentName) {
                 }
             } else {
                // Always wrap component name as class name for convenience.
-	   		   object.template = html
+	   		   object.template = html;
             }
 
             if (object.ready) {
