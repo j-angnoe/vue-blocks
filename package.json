@@ -1,13 +1,13 @@
 {
   "name": "vue-blocks",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Vue Blocks Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "parcel build ./index.js -o dist/vue-blocks.js --no-source-maps",
     "watch": "parcel watch ./index.js -o dist/vue-blocks.js --no-hmr --no-source-maps",
-    "prepublish" : "npm run build"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
