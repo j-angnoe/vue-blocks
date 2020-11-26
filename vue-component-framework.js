@@ -76,7 +76,7 @@ function domComponentCollectorRaw() {
 
                     var comp = {
                         data() {
-                            return data;
+                            return JSON.parse(JSON.stringify(data));
                         },
                         props,
                         watch,
