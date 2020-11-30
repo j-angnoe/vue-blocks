@@ -50,8 +50,12 @@ function domComponentCollectorRaw() {
             var code = script.innerHTML.replace(/export default/,'module.exports = ');
             var process = comp => comp;
 
-            if (code.match("'short';")) {
-                code = code.replace(/return class \{/, 'module.exports = class {');
+            if (code.match("('short';|return class vue)")) {
+                if (code.match('return class vue')) { 
+                    code = code.replace(/return\s+class\s+vue\s*\{/, 'module.exports = class {');
+                } else { 
+                    code = code.replace(/return\s+class\s+\{/, 'module.exports = class {');
+                }
                 code = code.replace(/\sconstructor\s*\(/, 'mounted(');
                 code = code.replace(/\sdestructor\s*\(/, 'unmounted(');
                 process = function(obj) {
