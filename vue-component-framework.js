@@ -38,7 +38,8 @@ function loadModules(context) {
  * <script> tags are may do export default { }
  **/
 
-function domComponentCollectorRaw() {
+function domComponentCollectorRaw(scriptVariables) {
+  scriptVariables = scriptVariables || {};
     var template = this.content;
     var script = template.querySelector('script:not([src]):not([type^="text"])');   
     var loadScripts = template.querySelectorAll('script[src]');   
@@ -105,10 +106,10 @@ function domComponentCollectorRaw() {
     		if (matches) {
     			return Promise.all(matches).then(done => {
     				console.log("All matches have been resolved.");
-    				return process(commonJsExec(code));
+    				return process(commonJsExec(code, scriptVariables));
     			})
     		} else {
-    			return process(commonJsExec(code));
+    			return process(commonJsExec(code, scriptVariables));
     		}
 
     		
@@ -159,10 +160,10 @@ function domCollectorStriptags(html) {
     return html;	
 }
 
-function domComponentCollector(componentName) {
+function domComponentCollector(componentName, scriptVariables) {
     componentName = componentName || '';
 
-    var promise = domComponentCollectorRaw.call(this);
+    var promise = domComponentCollectorRaw.call(this, scriptVariables);
 
 	var props = (this.getAttribute('props')||'').split(/\s?,\s?/).filter(Boolean);
 
@@ -242,15 +243,19 @@ function domComponentCollector(componentName) {
 }
 
 
-function loadVueComponents(context) {
+function loadVueComponents(context, registrar, scriptVariables) {
     context = context || document;
     var components = [...context.querySelectorAll('template[component]')];
 
     components.forEach(function (comp) {
         var componentName = comp.getAttribute('component');
-        var object = domComponentCollector.call(comp, componentName)
+        var object = domComponentCollector.call(comp, componentName, scriptVariables)
 
-        Vue.component(componentName, object);           
+        if (registrar) {
+          registrar(componentName, object);
+        } else {
+          Vue.component(componentName, object);
+        }
     });
 
     loadVueFiles();
@@ -385,24 +390,28 @@ function require_script(name) {
     throw new Error("Cannot require asynchronously: " + name);  
 };
 
-function commonJsExec(code) {
-	try { 
-	    var moduleJsFn = new Function('module,exports,require', code);
-	    
+function commonJsExec(code, scriptVariables) {
+	try {
+      var module = {exports:{}};
+      // Context variables will be available in the scope of the evaluated script.
+      scriptVariables = scriptVariables || {};
+      scriptVariables['module'] = module;
+      scriptVariables['exports'] = module.exports,
+      scriptVariables['require'] = require_script;
+
+	    var moduleJsFn = new Function(Object.keys(scriptVariables).join(','), code);
+
 	    /* work in progress... dynamic module resolve.
 	    moduleJs.match(/\W?require\(.+?\)/g).forEach(function (req) {
 	        req = req.match(/["'].+?["']/);
 	        
 	        console
 	    })*/
-	    
-	    var module = {exports:{}};
-	  
 
+      // Run it
+      // Assume Object.values returns in the same order as Object.keys
+	    moduleJsFn(...Object.values(scriptVariables));
 
-	    // Run it
-	    moduleJsFn(module, module.exports, require_script);
-	    
 	    // and return the exports:
 	    return module.exports;    
 
