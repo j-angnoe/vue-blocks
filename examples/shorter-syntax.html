@@ -38,6 +38,33 @@
                 This is a vue component with even shorter syntax.
                 This will mean less clutter.
             
+                An example of this syntax:
+                <pre ref="example">
+    return class vue  {
+        attr1 = 'value 1';
+        attr2 = 'value 2';
+        computed = {
+            computed_value() {
+                return this.attr1 + ' ' + this.attr2
+            }
+        };
+
+        constructor() {
+            // mapped to mounted
+            this.attr1 = 'hello';
+        }
+
+        destructor() {
+            // mapped to unmounted
+        }
+
+        clickButton() {
+            alert("You clicked something")
+        }
+    }
+
+                </pre>
+
                 <div>Attr1: {{attr1}} </div>
                 <div>Attr2: {{attr2}} </div>
                 <div>Computed value: {{computed_value}}</div>
@@ -45,6 +72,7 @@
                 <button type="button" @click="clickButton()">Click here</button>
 
                 <p class="my-para">This paragraph will be red</p>
+
 
             </div>
             <script>

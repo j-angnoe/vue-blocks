@@ -57,14 +57,13 @@ function domComponentCollectorRaw(scriptVariables) {
                 } else { 
                     code = code.replace(/return\s+class\s+\{/, 'module.exports = class {');
                 }
+                
                 code = code.replace(/\sconstructor\s*\(/, 'mounted(');
-                code = code.replace(/\sdestructor\s*\(/, 'unmounted(');
-                process = function(obj) {
-                    console.log('obj',obj);
-                    
+                code = code.replace(/\sdestructor\s*\(/, 'destroyed(');
+                process = function(obj) {                    
                     var data = new obj;
                     var {props, watch, computed, components, directives, ...data} = data;
-                    var lifeCycleMethods = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'beforeUnmount', 'unmounted', 'errorCaptured', 'renderTracked', 'renderTriggered'];
+                    var lifeCycleMethods = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'beforeUnmount', 'unmounted', 'errorCaptured', 'renderTracked', 'renderTriggered','destroyed','beforeDestroy'];
                     var methods = {};
                     var lifeCycle = {};
                     for (var method of Object.getOwnPropertyNames(obj.prototype)) {
@@ -91,21 +90,23 @@ function domComponentCollectorRaw(scriptVariables) {
                         ...lifeCycle,
                         methods
                     }
-                    console.log(comp);
                     return comp;
                 }
             }
     		var matches = [];
 
-            var require_regex = /require\s*\(['"]([A-Za-z0-9\-\./]+)['"]\)/ig; /* fix syntax highlight: ' */
+            var require_regex = /require\s*\(['"]([^'"]+)['"]\)/ig;
 
     		code.replace(require_regex, (...match) => {
-    			matches.push(window[match[1]]);
+                if (!window[match[1]]) {
+                    matches.push(preload_module(match[1]));
+                } else {
+                    matches.push(window[match[1]]);
+                }
     		});
     		
     		if (matches) {
     			return Promise.all(matches).then(done => {
-    				console.log("All matches have been resolved.");
     				return process(commonJsExec(code, scriptVariables));
     			})
     		} else {
@@ -199,7 +200,7 @@ function domComponentCollector(componentName, scriptVariables) {
                 return '*[scoped-css-' + componentName + '] ' + x.replace(':scope', '').replace(/^\s+/,'');
             }).join(',') + '{';
         });
-        console.log(scopedStyle, 'scoped Style');
+        // console.log(scopedStyle, 'scoped Style');
         var scopedStyleElem = document.createElement('style');
         scopedStyleElem.innerHTML = scopedStyle;
         document.head.append(scopedStyleElem);
@@ -382,7 +383,7 @@ if (typeof require !== 'undefined') {
 
 function require_script(name) {
     if (window[name]) {
-        return window[name];
+        return window[name] ;
     } if (oldRequire) {
         return oldRequire(name)
     }
@@ -390,6 +391,24 @@ function require_script(name) {
     throw new Error("Cannot require asynchronously: " + name);  
 };
 
+function preload_module(name) {
+    var fn = 'resolveImport' + (new Date).getTime();
+    return new Promise(resolve => {
+        window[fn] = resolve;
+        var script = document.createElement('script');
+
+        var url = name;
+        if (!name.match(/^https?:\/\//)) {
+            url = 'https://jspm.dev/' + name;
+        }
+        script.type = 'module';
+        script.innerHTML = 'import * as md from "' + url + '"; window.' + fn + '(md);';
+        document.body.appendChild(script);
+    }).then(result => {
+        delete window[fn];
+        window[name] = result.default && result.default.default || result.default;
+    });
+}
 function commonJsExec(code, scriptVariables) {
 	try {
       var module = {exports:{}};
@@ -416,6 +435,7 @@ function commonJsExec(code, scriptVariables) {
 	    return module.exports;    
 
 	} catch (error) {
+        console.error(error);
 		console.error(error.stack);
 		console.info('in code: ' + code);
 	}
