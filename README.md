@@ -13,7 +13,7 @@ You may copy-and-paste the [Quick Start HTML Template](#quick-start-html-templat
 below, are have a look at the [examples](./examples/index.html).
 
 ## Documentation
-Can be found here: [docs/index.md]()
+Can be found here: [./docs/index.md]()
 
 ## Write components
 
