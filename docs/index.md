@@ -2,11 +2,11 @@
 
 ## Examples
 
-- Nested routes: [../examples/nested-routes.html]()
-- Different ways to define templates: [../examples/template-module-examples.html]()
-- Support asynchronous loading of vue files [../examples/vue-files.html]()
-- Scoped styles are supported: [../examples/scoped-styles.html]()
-- A shorter syntax for vue components is possible: [../examples/shorter-syntax.html]()
+- Nested routes: [../examples/nested-routes.html](../examples/nested-routes.html)
+- Different ways to define templates: [../examples/template-module-examples.html](../examples/template-module-examples.html)
+- Support asynchronous loading of vue files [../examples/vue-files.html](../examples/vue-files.html)
+- Scoped styles are supported: [../examples/scoped-styles.html](../examples/scoped-styles.html)
+- A shorter syntax for vue components is possible: [../examples/shorter-syntax.html](../examples/shorter-syntax.html)
 
 ## Using the built version:
 When using the bundled version (../dist/vue-blocks.js) Vue Blocks
