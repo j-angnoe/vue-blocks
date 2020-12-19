@@ -81,6 +81,7 @@ dist/vue-blocks.js bundles Vue 2.1.8 and Vue router 2.1.1.
 ## Quick Start HTML Template
 
 ```html
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Vue Blocks Framework</title>
@@ -111,6 +112,7 @@ dist/vue-blocks.js bundles Vue 2.1.8 and Vue router 2.1.1.
 This example includes some components and a few urls.
 
 ```html
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Vue Blocks Framework</title>
