@@ -20,7 +20,59 @@
 		<template module="snippets">
 			<script>
 			module.exports = {
+				'one': `<template component="app">
+	<div class="container">
+		<nav>
+			<my-navigation></my-navigation>
+		</nav>
+		<router-view></router-view>
+	</div>
+</template>
 
+<!-- reusable components -->
+<template component="my-navigation">
+	<div class="navigation">
+		<router-link to="/">Home</router-link>
+		<router-link to="/page1">Page 1</router-link>
+		<router-link to="/page2/with-param">Page 2</router-link>
+	</div>
+</template>`,
+				
+
+
+				'two':`<!-- homepage -->
+<template url="/">
+	<div>
+		Welcome to my awesome app
+		<div v-if="quote">Some nice quote:
+			<pre style="white-space: pre-wrap;">{{quote.body}}\n- {{quote.author}}</pre>
+		</div>
+	</div>
+	<script>
+	var randomQuotes = require('random-quotes');
+	export default {
+		data() { 
+			return {
+				quote: null
+			}
+		},
+		mounted() {
+			this.quote = randomQuotes();
+		}
+	}
+	</${'script'}>
+</template>
+
+<!-- simple route -->
+<template url="/page1">
+	<div>Page 1</div>
+</template>
+
+<!-- route with params -->
+<template url="/page2/:param">
+	<div>Page 2: Param {{$route.params.param}}</div>
+</template>`,
+				
 				'three': `
 <template component="full-component-example">
 	<div class="full-component-example">
