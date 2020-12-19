@@ -5,6 +5,10 @@ in a html file. No external tooling required. It's the ease-of-use of
 .vue files without being limited to one component per file. It a weapon of choice for
 quick and simple prototypes. For this purpose Vue and VueRouter are included.
 
+Take a look at some examples: 
+- Single page [TodoMVC example](https://fluxfx.nl/vue-blocks/examples/todomvc.html) ([source](./examples/todomvc.html))
+- [Try it online](https://fluxfx.nl/vue-blocks/examples/try-it.html) ([source](./examples/try-it.html))
+
 ## Usage
 
 Add `<script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script>` to your HTML file 
