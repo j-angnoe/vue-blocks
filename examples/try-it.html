@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Vue Blocks Framework</title>
+		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<!-- <script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script> -->
+
+		<script src="../dist/vue-blocks.js"></script>
+	</head>
+	<body>
+
+		<div class="container-fluid">
+			<header>
+				<h1>Vue blocks - Try it out</h1>
+			</header>
+			<!-- app mount point -->
+			<app></app>
+        </div>
+        <template component="app">
+            <router-view></router-view>
+        </template>
+        <template url="/">
+			<div>
+				<div class="row">
+					<div class="col-sm-6">
+                        <button @click="source = emptySource">Clear</button>
+                        <button @click="source = defaultSnippet">Restore default</button>
+                        <button @click="run()" title="You may also hit Ctrl+Enter or Ctrl-S to run ;-)">Run</button>
+                        <textarea 
+                            v-model="source" 
+                            debounce="500" 
+                            wrap="off"
+                            spellc heck="false" 
+                            @keyup.ctrl.enter="run()"
+                            @keyup.meta.enter="run()"
+                            @keydown.ctrl.s.prevent.stop="run()"
+                            @keydown.meta.s.prevent.stop="run()"
+                            >
+
+						</textarea>	
+					</div>
+					<div class="col-sm-6" style="height:100%;">
+						<code-preview :code="html"></code-preview>	
+					</div>
+				</div>
+            </div>
+            <style scoped>
+                textarea {
+                    width: 100%;
+                    height: calc(90vh - 30px);
+                    font-family: monospace, mono;
+                    font-size: 12pt;
+                    line-height: 2.0rem;
+                }
+                iframe {
+                    height: 90vh;
+                }
+            </style>
+			<script>
+            var snippets = require('snippets');
+            
+            
+			var header = '\t<app></app>';
+
+			export default {
+                
+                data() {
+                    var snippet = document.querySelector('#snippet').innerHTML;
+
+					return {
+                        defaultSnippet: header + snippet,
+                        emptySource: header + "\n<template component=\"app\">\n</template>", 
+                        source: header + snippet,
+                        html: header + snippet,
+					}
+				},
+				methods: {
+                    run() {
+                        this.html = '';
+                        setTimeout(() => {
+                            this.html = this.source;
+                        }, 50);
+                    }
+                }
+			}
+			</script>
+		</template>
+
+		<template component="code-preview">
+			<div style="display: block; width:100%; height:90vh;">  
+				<iframe :src="iframeSource" style="display: block; width:100%; height:90vh;"></iframe> 
+				<!-- <pre>{{code | json }}</pre> -->
+			</div>
+			<script>
+			export default {
+				props: {
+					"code" : {
+						type: String,
+						required:true
+					}
+				},
+				computed: {
+					template() {
+						var code = this.code;
+						var anchor = document.createElement('a');
+						anchor.href = '../dist/vue-blocks.js';
+
+						var path_to_vue_blocks = anchor.href;
+						var protocol = anchor.protocol;
+
+						return `<html>
+<head>
+	<link href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="${path_to_vue_blocks}"></${'script'}>		
+	<style>body { padding: 20px; }</style>
+</head>
+<body>
+	<!-- preview: html -->
+	${code}
+</body>
+</html>`;
+					}, 
+
+					mounted() {
+
+					},
+
+					iframeSource() {
+						var dataUrl  = "data:text/html;charset=utf-8,";
+						var template = this.template;		
+
+						return dataUrl + escape(template);
+					}
+				},
+			}
+			</script>
+		</template>
+
+<template id="snippet">
+    <template component="app">
+        <div class="container">
+            <nav>
+                <my-navigation></my-navigation>
+            </nav>
+            <router-view></router-view>
+        </div>
+    </template>
+
+    <!-- reusable components -->
+    <template component="my-navigation">
+        <div class="navigation">
+            <router-link to="/">Home</router-link>
+            <router-link to="/page1">Page 1</router-link>
+            <router-link to="/page2/with-param">Page 2</router-link>
+        </div>
+    </template>
+    <!-- homepage -->
+    <template url="/">
+        <div>
+            Welcome to my awesome app
+            <div v-if="quote">Some nice quote:
+                <pre style="white-space: pre-wrap;">{{quote.body}}\n- {{quote.author}}</pre>
+            </div>
+        </div>
+        <script>
+        var randomQuotes = require('random-quotes');
+        export default {
+            data() { 
+                return {
+                    quote: null
+                }
+            },
+            mounted() {
+                this.quote = randomQuotes();
+            }
+        }
+        </script>
+    </template>
+
+    <!-- simple route -->
+    <template url="/page1">
+        <div>Page 1</div>
+    </template>
+
+    <!-- route with params -->
+    <template url="/page2/:param">
+        <div>Page 2: Param {{$route.params.param}}</div>
+    </template>
+</template>
+    </body>
+</html>
