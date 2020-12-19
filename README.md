@@ -12,6 +12,8 @@ and start writing your Vue application. Then you add `<app></app>` to body and d
 You may copy-and-paste the [Quick Start HTML Template](#quick-start-html-template) provided 
 below, are have a look at the [examples](./examples/index.html).
 
+## Documentation
+Can be found here: [docs/index.md]()
 
 ## Write components
 
