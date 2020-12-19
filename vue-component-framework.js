@@ -319,7 +319,7 @@ function collectRoutes(context, handled) {
             }
         }
 
-        var componentName = 'url-handler-' + url.replace(/^\//, 'index').replace(/[^a-z0-9_]/, '-');
+        var componentName = ('url-handler-' + url.replace(/^\/$/, 'index')).replace(/[^a-z0-9_]+/g, '-');
 
         routeObject.component = domComponentCollector.call(el, componentName)
 
