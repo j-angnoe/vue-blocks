@@ -7,8 +7,8 @@
 
 			<slot></slot>
 
-			<li :class="{active:isActive('index.html#/try-it')}">
-				<a href="index.html#/try-it" >Try it</a>
+			<li :class="{active:isActive('try-it.html')}">
+				<a href="try-it.html" >Try it</a>
 			</li>
 			<li :class="{active:isActive('nested-routes.html')}">
 				<a href="nested-routes.html">Nested routes</a>
