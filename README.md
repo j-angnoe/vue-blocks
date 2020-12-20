@@ -2,7 +2,7 @@
 
 This is a drop-in script that enables you to write multiple Vue components and routes 
 in a html file. No external tooling required. It's the ease-of-use of 
-.vue files without being limited to one component per file. It a weapon of choice for
+.vue files without being limited to one component per file. It's my weapon of choice for
 quick and simple prototypes. For this purpose Vue and VueRouter are included.
 
 Take a look at some examples: 
