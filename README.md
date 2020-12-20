@@ -174,39 +174,46 @@ This example includes some components and a few urls.
 	`<template src="path/to/vue-file.vue"></template>`
 
 - Short syntax for Vue components:
-	To reduce boilerplate code
+	Less boilerplate, more focus on your idea.
 
 	```html
-	<script>
-	return class vue {
-		my_variable = 'my_value';
-		computed = {
-			// ...
+	<template component="...">
+		... 
+		<script>
+		return class vue {
+			my_variable = 'my_value';
+			computed = {
+				// ...
+			}
+			watch = {
+				// ...
+			}
+			mounted() {
+				// mounted function
+			}
+			async clickButton() {
+				// this will be a Vue method.
+			}
 		}
-		watch = {
-			// ...
-		}
-		mounted() {
-			// mounted function
-		}
-		async clickButton() {
-			// this will be a Vue method.
-		}
-	}
-	</script>
+		</script>
+	</template>
 	```
 
 - You can require every npm module, they will be loaded from https://jspm.dev.
+	Less need for build tools, more focus on your idea.
 
 	```html
-	<script>
-		var uniqid = require('uniqid');	// https://jspm.dev/uniqid will be loaded
-		// var uniqid = require('https://jspm.dev/uniqid');  // Is equivalent.
+	<template component="...">
+		... 
+		<script>
+			var uniqid = require('uniqid');	// https://jspm.dev/uniqid will be loaded
+			// var uniqid = require('https://jspm.dev/uniqid');  // Is equivalent.
 
-		export default() {
-			mounted() {
-				alert("My unique id: " + uniqid())
+			export default() {
+				mounted() {
+					alert("My unique id: " + uniqid())
+				}
 			}
-		}
-	</script>
+		</script>
+	</template>
 	```
