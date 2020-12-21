@@ -249,6 +249,7 @@ function loadVueComponents(context, registrar, scriptVariables) {
     var components = [...context.querySelectorAll('template[component]')];
 
     components.forEach(function (comp) {
+        
         var componentName = comp.getAttribute('component');
         var object = domComponentCollector.call(comp, componentName, scriptVariables)
 
@@ -259,14 +260,14 @@ function loadVueComponents(context, registrar, scriptVariables) {
         }
     });
 
-    loadVueFiles();
+    return loadVueFiles(context, registrar, scriptVariables);
 }
 
-function loadVueFiles(context) {
+function loadVueFiles(context, registrar, scriptVariables) {
     context = context || document;
     var components = [...context.querySelectorAll('template[src]')];
 
-    components.forEach(function(comp) {
+    return Promise.all(components.map(function(comp) {
         var url = comp.getAttribute('src');
 
         if (url.match(/\.vue$/)) {
@@ -274,7 +275,10 @@ function loadVueFiles(context) {
 
             // console.log(componentName);
 
-            Vue.component(componentName, function(resolve, reject) {
+            if (!registrar) {
+                registrar = Vue.component.bind(Vue);
+            }
+            registrar(componentName, function(resolve, reject) {
                 fetch(url).then(r => r.text()).then(source => {
                     // console.log(source);
                     source = source.replace(/<\/?template.*?>/g,'')
@@ -282,15 +286,21 @@ function loadVueFiles(context) {
                     var el = document.createElement('template');
                     el.innerHTML = source;
 
-                    var object = domComponentCollector.call(el, componentName);
+                    var object = domComponentCollector.call(el, componentName, scriptVariables);
 
                     object(resolve);
-
                 });
             })
-            
+        } else {
+            return fetch(url).then(r => r.text()).then(source => {
+                var el = document.createElement('template');
+                el.innerHTML = source;
+                return loadVueComponents(el.content, function (c, obj) {
+                    registrar(c, obj);
+                }, scriptVariables);
+            });
         }
-    })
+    }));
 }
 
 

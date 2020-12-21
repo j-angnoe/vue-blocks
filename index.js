@@ -9,21 +9,23 @@ Vue.use(VueRouter)
 // Start the application application
 document.addEventListener('DOMContentLoaded', done => {
     loadModules()
-    loadVueComponents()
-
-
-    var routes = collectRoutes();
-    var router = new VueRouter({
-        routes: routes
-    })
+    Promise.resolve(loadVueComponents()).then(done => {
+        var routes = collectRoutes();
+        var router = new VueRouter({
+            routes: routes
+        })
+        
     
+        // @todo remove this, (leak routes to window for debugging.)
+        window.routes = routes
 
-    // @todo remove this, (leak routes to window for debugging.)
-    window.routes = routes
+    
+        var appInstance = new Vue({
+            router: router
+        }).$mount('app')
+    })
 
-    var appInstance = new Vue({
-        router: router
-    }).$mount('app')
+
 })
 
 var isVue2 = Vue.version.match(/^2/);
