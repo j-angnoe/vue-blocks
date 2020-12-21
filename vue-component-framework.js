@@ -402,7 +402,7 @@ function require_script(name) {
 };
 
 function preload_module(name) {
-    var fn = 'resolveImport' + (new Date).getTime();
+    var fn = 'resolveImport' + (Math.random()*(new Date).getTime()).toString(16);
     return new Promise(resolve => {
         window[fn] = resolve;
         var script = document.createElement('script');
