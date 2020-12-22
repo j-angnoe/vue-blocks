@@ -15,8 +15,8 @@
     <template component="app">
         <v-app>
             <v-navigation-drawer app permanent>
-                <v-toolbar>
-                    <v-icon>V</v-icon>
+                <v-toolbar> 
+                    <v-icon color="green">mdi-cube</v-icon>
                     <v-spacer></v-spacer>
                     <v-toolbar-title>Vue-Blocks</v-toolbar-title>
                     <v-spacer></v-spacer>
@@ -30,6 +30,9 @@
                     group="/intro"
                     >
                         <template v-slot:activator>
+                            <v-list-item-icon>
+                                <v-icon>mdi-information-outline</v-icon>
+                            </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Introduction</v-list-item-title>
                             </v-list-item-content>
@@ -37,7 +40,7 @@
 
                         <v-list-item to="/intro/intro">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 
@@ -49,7 +52,7 @@
 
                         <v-list-item to="/intro/install">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Installation</v-list-item-title>
@@ -58,7 +61,7 @@
 
                         <v-list-item to="/intro/quick-start">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Quick Start</v-list-item-title>
@@ -70,6 +73,9 @@
                         group="/features"
                     >
                         <template v-slot:activator>
+                            <v-list-item-icon>
+                                <v-icon>mdi-format-list-checkbox</v-icon>
+                            </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Features</v-list-item-title>
                             </v-list-item-content>
@@ -77,7 +83,7 @@
 
                         <v-list-item to="/features/routing">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Using Routes</v-list-item-title>
@@ -85,7 +91,7 @@
                         </v-list-item>
                         <v-list-item to="/features/scoped-styles">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Scoped styles</v-list-item-title>
@@ -93,7 +99,7 @@
                         </v-list-item>
                         <v-list-item to="/features/require">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Using require()</v-list-item-title>
@@ -101,7 +107,7 @@
                         </v-list-item>
                         <v-list-item to="/features/shortsyntax">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Short syntax</v-list-item-title>
@@ -109,7 +115,7 @@
                         </v-list-item>
                         <v-list-item to="/features/template-src">
                             <v-list-item-icon>
-                                <v-icon>mdi-flag</v-icon>
+                                <v-icon>mdi-chevron-right</v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title>Loading (Vue) files</v-list-item-title>
@@ -154,7 +160,7 @@
     </template>
 
     <template url="/intro/intro">
-        <div class="container">
+        <div class="article">
            <h1 class="text-h3 mb-4">Introduction</h1>
            <p>
                 Got a PoC, demo or idea that needs to be coded up and don't 
@@ -170,7 +176,7 @@
                Vue Blocks is a layer on top of Vue (v2) and VueRouter that allows you to write 
                vue components and routes in an enjoyable way without having to rely on build tools.
                Even though Vue allows you to build an application without requiring any build tools
-               you will find out the no-tool experience gets chaotic pretty quickly.
+               you will find out that the no-tool experience gets chaotic pretty quickly.
                There are <a>many ways</a> you can go about writing components and templates, but usually
                involve going `all javascript` with your components/templates, having to refer to 
                &lt;template&gt; tags scattered all over your html document, or giving in to using build tools.
@@ -220,7 +226,7 @@
     </template>
 
     <template url="/intro/install">
-        <div class="container">
+        <div class="article">
             <h1 class="text-h3 mb-4">Installation</h1>
 
             <h2 class="text-h5 mb-4">Drop in script</h2>
@@ -285,7 +291,7 @@ const app = new Vue({
         </div>
     </template>
     <template url="/intro/quick-start">
-            <div class="container">
+            <div class="article">
                 <h1 class="text-h3 mb-4">Quick Start</h1>
             
                 <p>
@@ -371,7 +377,7 @@ const app = new Vue({
     </template>
 
     <template url="/features/scoped-styles">
-        <div class="container">
+        <div class="article">
             <h1 class="text-h3 mb-4">Scoped styles</h1>
             
             <p>
@@ -407,7 +413,7 @@ const app = new Vue({
 
 
     <template url="/features/routing">
-            <div class="container">
+            <div class="article">
                 <h1 class="text-h3 mb-4">Routing example</h1>
                 
                 <p>
@@ -505,7 +511,7 @@ const app = new Vue({
 
 
     <template url="/features/require">
-            <div class="container">
+            <div class="article">
                 <h1 class="text-h3 mb-4">Using require()</h1>
                 
                 <p>
@@ -631,7 +637,7 @@ window.myFunction = function () {
 
 
     <template url="/features/shortsyntax">
-            <div class="container">
+            <div class="article">
                 <h1 class="text-h3 mb-4">Short syntax</h1>
                 
                 <p>
@@ -685,7 +691,7 @@ window.myFunction = function () {
 
 
     <template url="/features/template-src">
-            <div class="container">
+            <div class="article">
                 <h1 class="text-h3 mb-4">Loading of vue and vue-block files</h1>
                 <p>
                     We have been talking about single html document a lot, but we do 
@@ -749,40 +755,44 @@ window.myFunction = function () {
 
 
     <template component="example-code" props="code">
-        <div class="container">
-            <v-btn color="lightgreen" dense @click="copyToClipboard">
-                <v-icon class="mr-2">mdi-clipboard</v-icon>
+        <v-sheet color="#f9f9f9" rounded elevation="2" class="pa-4 mb-4">
+            <highlightjs class="mb-4" :code="code.trim()"></highlightjs>
 
-                Copy to clipboard
-            </v-btn>
-            <v-dialog
-                v-if="!('dont-run' in $attrs)"
-                v-model="dialog"
-                width="600px"
-                >
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                    color="primary"
-                    dark
-                    v-bind="attrs"
-                    v-on="on"
+            <v-btn-group>
+                <v-btn color="success" small @click="copyToClipboard">
+                    <v-icon small class="mr-2">mdi-clipboard-outline</v-icon>
+
+                    Copy to clipboard
+                </v-btn>
+                <v-dialog
+                    v-if="!('dont-run' in $attrs)"
+                    v-model="dialog"
+                    width="600px"
                     >
-                        <v-icon class="mr-2">mdi-play</v-icon>
-                    Run example
-                    </v-btn>
-                </template>
-                <v-card>
-                    <v-toolbar>
-                        <v-subheader>Running example</v-subheader>
-                        <v-spacer>
-                        <v-btn @click="dialog = false" icon>
-                            <v-icon>mdi-close</v-icon>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                        color="primary"
+                        small
+                        v-bind="attrs"
+                        v-on="on"
+                        >
+                            <v-icon small class="mr-2">mdi-play</v-icon>
+                        Run example
                         </v-btn>
-                    </v-toolbar>
-                    <v-divider></v-divider>
-                    <iframe v-if="dialog" :src="iframeSource()" style="display: block; border:none; padding:20px; width:600px; height:600px;"></iframe> 
-                </v-card>
-            </v-dialog>
+                    </template>
+                    <v-card>
+                        <v-toolbar>
+                            <v-subheader>Running example</v-subheader>
+                            <v-spacer>
+                            <v-btn @click="dialog = false" icon>
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <iframe v-if="dialog" :src="iframeSource()" style="display: block; border:none; padding:20px; width:600px; height:600px;"></iframe> 
+                    </v-card>
+                </v-dialog>
+            </v-btn-group>
             <v-snackbar
                 v-model="snackbar"
                 >
@@ -798,10 +808,8 @@ window.myFunction = function () {
                     Close
                     </v-btn>
                 </template>
-            </v-snackbar>
-            
-            <highlightjs :code="code"></highlightjs>
-        </div>
+            </v-snackbar>   
+        </v-sheet>
         <script>
             return class vue {
                 dialog = false;
@@ -879,7 +887,7 @@ window.myFunction = function () {
         </script>
     </template>
     <script src="../dist/vue-blocks.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/styles/default.min.css">
     <script src="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/highlight.min.js"></script>
 
@@ -892,11 +900,23 @@ window.myFunction = function () {
             }
         }
     </script>
-    <style>code { 
+    <style>
+    code { 
         background: transparent !important; 
         font-weight: normal !important;
         color: inherit !important;
-    }</style>
+    }
+    .v-main .article {
+        margin-top: 30px;
+        margin-bottom: 50px;
+        max-width: 800px;
+        margin-left: 30px;
+    }
+    .v-main .article p {
+        line-height: 1.8em;
+        color: #444;
+    }
+    </style>
 
 
 </body>
