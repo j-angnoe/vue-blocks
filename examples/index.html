@@ -1,327 +1,896 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Vue Blocks Framework</title>
-		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-		<!-- <script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script> -->
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="#" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
 
-		<script src="../dist/vue-blocks.js"></script>
-	</head>
-	<body>
+<body>
+    <app id="app">
+    </app>
+    <template component="app">
+        <v-app>
+            <v-navigation-drawer app permanent>
+                <v-toolbar>
+                    <v-icon>V</v-icon>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-title>Vue-Blocks</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-content v-if="package">
+                        v{{package.version}}
+                    </v-toolbar-content>
+                </v-toolbar>
 
-		<div class="container">
-			<header>
-				<h1>Vue blocks</h1>
-			</header>
-			<!-- app mount point -->
-			<app></app>
-		</div>
+                <v-list>
+                <v-list-group
+                    group="/intro"
+                    >
+                        <template v-slot:activator>
+                            <v-list-item-content>
+                                <v-list-item-title>Introduction</v-list-item-title>
+                            </v-list-item-content>
+                        </template>
 
-		<template module="snippets">
-			<script>
-			module.exports = {
-				'one': `<template component="app">
-	<div class="container">
-		<nav>
-			<my-navigation></my-navigation>
-		</nav>
-		<router-view></router-view>
-	</div>
+                        <v-list-item to="/intro/intro">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                
+                                <v-list-item-title>Why Vue Blocks?</v-list-item-title>
+                            </v-list-item-content>
+
+                            
+                        </v-list-item>
+
+                        <v-list-item to="/intro/install">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Installation</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+
+                        <v-list-item to="/intro/quick-start">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Quick Start</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+
+                    </v-list-group>
+                    <v-list-group
+                        group="/features"
+                    >
+                        <template v-slot:activator>
+                            <v-list-item-content>
+                                <v-list-item-title>Features</v-list-item-title>
+                            </v-list-item-content>
+                        </template>
+
+                        <v-list-item to="/features/routing">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Using Routes</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item to="/features/scoped-styles">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Scoped styles</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item to="/features/require">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Using require()</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item to="/features/shortsyntax">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Short syntax</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item to="/features/template-src">
+                            <v-list-item-icon>
+                                <v-icon>mdi-flag</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Loading (Vue) files</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list-group>
+                </v-list>
+            </v-navigation-drawer>
+
+            <v-app-bar app color="white">
+                <v-spacer></v-spacer>
+                <v-btn icon
+                    href="https://github.com/j-angnoe/vue-blocks"
+                    target="_blank"
+                    title="Vue-blocks on github"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"></path></svg>
+                </v-btn>
+            </v-app-bar>
+
+            <v-main>
+                <v-container>
+                    <router-view></router-view>
+                </v-container>
+            </v-main>
+            <v-footer app>
+                <v-col class="text-center" cols="12">
+                    {{ new Date().getFullYear() }} — <strong>Vue Blocks</strong>
+                </v-col>
+            </v-footer>
+        </v-app>
+        <script>
+            return class vue {
+                package = null;
+                mounted() {
+                    fetch('../../package.json').then(r => r.json()).then(data => {
+                        this.package = data
+                    })
+                }
+            }
+        </script>
+    </template>
+
+    <template url="/intro/intro">
+        <div class="container">
+           <h1 class="text-h3 mb-4">Introduction</h1>
+           <p>
+                Got a PoC, demo or idea that needs to be coded up and don't 
+                want to be bothered with build tools (yet)?
+            </p>
+            <p>
+               Vue Blocks makes writing vue applications in pure HTML without tooling
+               considerably less painful.
+           </p>
+
+           <h2 class="text-h5 mb-4">What is Vue Blocks</h2>
+           <p>
+               Vue Blocks is a layer on top of Vue (v2) and VueRouter that allows you to write 
+               vue components and routes in an enjoyable way without having to rely on build tools.
+               Even though Vue allows you to build an application without requiring any build tools
+               you will find out the no-tool experience gets chaotic pretty quickly.
+               There are <a>many ways</a> you can go about writing components and templates, but usually
+               involve going `all javascript` with your components/templates, having to refer to 
+               &lt;template&gt; tags scattered all over your html document, or giving in to using build tools.
+           </p>
+           <p>
+               To solve this problem <b>Vue blocks</b> introduces the `&lt;template component&gt;`
+                syntax. This tag allows you to keep your component's script, style and template neatly together.
+                Because it's a simple HTML tag we are able to define many components in a single HTML document.
+                Vue Blocks will scan the document and automatically register each component it encounters.
+            </p>
+
+
+           <h2 class="text-h5 mb-4">
+                The Syntax
+           </h2>
+           <p>
+               <highlightjs :code='`<template component=\"component-name\">
+    <div>
+        <!-- HTML Template here -->
+    </div>
+    <style scoped>
+        /* Scoped styles here */
+    </style>
+    <${"script"}>
+        // Vue component definition like in Single File Components.
+        export default {
+            data() {
+                
+            },
+            mounted() {
+            },
+            methods: {
+                method1() { 
+                }
+            }
+        }
+    </${"script"}>
+</template>`'></highlightjs>               
+            </p>
+
+        </div>
+        <script>
+                    
+            return class vue {
+            }
+        </script>
+    </template>
+
+    <template url="/intro/install">
+        <div class="container">
+            <h1 class="text-h3 mb-4">Installation</h1>
+
+            <h2 class="text-h5 mb-4">Drop in script</h2>
+                <p>
+                    To get started, add `<code>&lt;script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"&lt;&gt;/script&gt;</code>` to your
+                    HTML document. Add `<code>&lt;app&gt;&lt;/app&gt;</code>` to your body and define a component named `app` to begin
+                    with.
+                </p>
+                <p>You may have a look at <router-link to="/intro/quick-start">Quick Start</router-link> for a full example html.</p>
+            
+            <h2 class="text-h5 mb-4">Via Github</h2>
+            <p>
+                The repository is public to all, feel free to clone <a href="https://github.com/j-angnoe/vue-blocks" target="_blank">https://github.com/j-angnoe/vue-blocks</a>
+            </p>
+
+            <h2 class="text-h5 mb-4">Via NPM</h2>
+            <p>
+                I maintain the package `vue-blocks` on npm: <a href="https://npmjs.org/vue-blocks" target="_blank">https://npmjs.org/vue-blocks</a>
+                To install it run <pre>npm install vue-blocks</pre>
+            
+                To use it in an existing project add something like this to your main javascript file:
+
+                <example-code :code="`
+                // app.js
+import Vue from 'vue/dist/vue.common';
+
+window.Vue = Vue;
+
+var VueBlocks = require('vue-blocks/vue-component-framework');
+
+VueBlocks.loadModules();
+VueBlocks.loadVueComponents();
+
+// alternative 1: provide a context / root element
+// VueBlocks.loadVueComponent(document.body)
+
+/**
+ * alternative 2: custom registering
+ * 
+ * VueBlocks.loadVueComponent(document.body, function(compName, compDef) {
+ *      console.log('Vue Block registers ' + componentName)
+ *      Vue.component(componentName, componentDefinition);
+ * });
+ **/
+
+import VueRouter from 'vue-router';
+
+var routes = VueBlocks.collectRoutes();
+var router = new VueRouter({
+  routes: routes
+});
+
+Vue.use(VueRouter);
+
+const app = new Vue({
+    el: '#my-app',
+    router
+});`" dont-run></example-code>
+            </p>
+
+
+        </div>
+    </template>
+    <template url="/intro/quick-start">
+            <div class="container">
+                <h1 class="text-h3 mb-4">Quick Start</h1>
+            
+                <p>
+                    Here we demonstrate a small vue application with one route (/)
+                    and a component that may receive a prop.
+                </p>
+                <p>
+                    If you'd like to use this example as a basis copy-paste this html to 
+                    an empty document and open it in a browser.
+                </p>
+
+                <example-code :code='`
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"></${"script"}>
+    </head>
+    <body>
+        <!-- Vue Blocks mounting point -->
+        <app></app>
+
+        <template component="app">
+            <div>
+                <!-- html template here -->
+                <nav>
+                    <router-link to="/">Page 1</router-link>
+                </nav>
+
+                <router-view></router-view>
+            </div>
+            <script>
+                export default {
+                    data() {
+                        return {
+                            app_running: false
+                        }
+                    },
+                    mounted() {
+                        this.app_running = true;
+                    }
+                }
+            </${"script"}>
+        </template>
+
+        <template url="/">
+            <div>
+                <h3>Main page</h3>
+                <p>This is the main page</p>
+                <my-component :my-prop="some_value"></my-component>
+            </div>
+            <script>
+                export default {
+                    data() {
+                        return {
+                            some_value: "some_value"
+                        }
+                    }
+                }
+            </${"script"}>
+        </template>
+
+        <template component="my-component" props="myProp">
+            <div>
+                My component with a prop: {{myProp}}
+            </div>
+        </template>
+    </body>
+</html>
+
+                `'></example-code>
+
+                <h2 class="text-h5 mb-4">JSFiddle</h2>
+                <p>
+                    I've prepared a few fiddles for you to play around with:
+
+                    <ul>
+                        <li>Basic usage: <a href="https://jsfiddle.net/o48L0y9j/" target="_blank">https://jsfiddle.net/o48L0y9j/</a></li>
+                        <li>Loading external vue files: <a href="https://jsfiddle.net/ntuj48kL/" target="_blank">https://jsfiddle.net/ntuj48kL/</a></li>
+                    </ul>
+                </p>
+            </div>
+    </template>
+
+    <template url="/features/scoped-styles">
+        <div class="container">
+            <h1 class="text-h3 mb-4">Scoped styles</h1>
+            
+            <p>
+                Vue blocks does a simple emulation of scoped styles. Trigger this behavior by 
+                writting `&lt;style scoped&gt;`.
+            </p>
+
+            <example-code :code='`
+<template component="some-component">
+    <div>
+        <p>My paragraph</p>
+        <div class="some block"></div>
+    </div>
+    <style scoped>
+        :root { 
+            background: black;
+            padding: 20px;
+            margin: 20px;
+        }
+        p {
+            color: red;
+            font-weight: bold;
+        }
+        .block {
+            border: 3px solid green;
+            height: 20px;
+        }
+    </style>
 </template>
-
-<!-- reusable components -->
-<template component="my-navigation">
-	<div class="navigation">
-		<router-link to="/">Home</router-link>
-		<router-link to="/page1">Page 1</router-link>
-		<router-link to="/page2/with-param">Page 2</router-link>
-	</div>
-</template>`,
-				
+            `' runner="<some-component></some-component>"></example-code>
+        </div>
+    </template>
 
 
-				'two':`<!-- homepage -->
-<template url="/">
-	<div>
-		Welcome to my awesome app
-		<div v-if="quote">Some nice quote:
-			<pre style="white-space: pre-wrap;">{{quote.body}}\n- {{quote.author}}</pre>
-		</div>
-	</div>
-	<script>
-	var randomQuotes = require('random-quotes');
-	export default {
-		data() { 
-			return {
-				quote: null
-			}
-		},
-		mounted() {
-			this.quote = randomQuotes();
-		}
-	}
-	</${'script'}>
+    <template url="/features/routing">
+            <div class="container">
+                <h1 class="text-h3 mb-4">Routing example</h1>
+                
+                <p>
+                    Here we demonstrate how you can work with Vue Router and Routing params,
+                    mainly with `&lt;template url=".."&gt;` and `&lt;template sub-url="..."&gt;` for nested
+                </p>
+
+                <example-code :code='`
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"></${"script"}>
+    </head>
+    <body>
+        <!-- Vue Blocks mounting point -->
+        <app></app>
+
+        <template component="app">
+            <div>
+                <nav>
+                    <router-link to="/">Page 1</router-link>
+                    <router-link to="/page2/my-param">Page 2 with a param</router-link>
+                    <router-link to="/page3">Page 3</router-link>
+
+                    <router-link to="/nested">Nested routes</router-link>
+                </nav>
+
+                <router-view></router-view>
+            </div>
+        </template>
+
+        <template url="/">
+            <div>
+                <h3>Page 1</h3>
+                <p>This is the main page</p>
+            </div>
+        </template>
+
+        <template url="/page2/:param?">
+            <div>
+                <h3>Page 2</h3>
+                <div v-if="$route.params.param">You supplied param: {{$route.params.param}}</div>
+                <div v-else>No parameter was provided</div>
+            </div>
+        </template>
+
+
+        <template url="/page3">
+            <div>
+                <h3>Page 3</h3>
+                <button @click="gotoPage2()">Click here to go to page2</button>
+            </div>
+            <script>
+                export default {
+                    methods: {
+                        gotoPage2() {
+                            this.$router.push("/page2");
+                        }
+                    }
+                }
+            </${"script"}>
+        </template>
+
+        <template url="/nested">
+            <div>
+                This is a page with nested routes:
+
+                <div>
+                    <router-link to="/nested/">Nested page 1</router-link>
+                    <router-link to="/nested/page2">Nested page 2</router-link>
+                </div>
+
+                <router-view></router-view>
+            </div>
+        </template>
+
+        <template sub-url="/nested">
+            <div>
+                Nested page main
+            </div>
+        </template>
+        <template sub-url="/nested/page2">
+            <div>
+                Nested page 2
+            </div>
+        </template>
+    </body>
+</html>
+
+                `'></example-code>
+            </div>
+    </template>
+
+
+
+    <template url="/features/require">
+            <div class="container">
+                <h1 class="text-h3 mb-4">Using require()</h1>
+                
+                <p>
+                    require is a function that is available to you inside the script block that 
+                    are inside Vue Block types (template component, url, sub-url and module)
+                </p>
+                <p>
+                    require() will first look at if the 'module' is defined on window. If it's
+                    not defined it will attempt to asynchronously load it from https://jspm.dev
+                </p>
+
+
+                <h3 class="text-h5 mb-4">Defining `modules` yourself</h3>
+                <p>There are two ways you may define `modules` inside a html document managed by Vue Blocks</p>
+
+                <example-code :code='`
+            
+<script>
+// Everything on window may be require()-d.
+
+window.myFunction = function () { 
+    // ...
+};
+</${"script"}>
+
+<!-- But if you want to have access to require yourself, use template module. -->
+<template module="myModule">
+    <script>
+        var myFunction = require("myFunction");
+
+        export default {
+            doSomething() {
+                // ... 
+            }
+        }
+    </${"script"}>
 </template>
+                `' :runner='`<div>Not much to see here...</div>`'></example-code>
 
-<!-- simple route -->
-<template url="/page1">
-	<div>Page 1</div>
-</template>
+                <h3 class="text-h5 mb-4">Loading NPM modules</h3>
 
-<!-- route with params -->
-<template url="/page2/:param">
-	<div>Page 2: Param {{$route.params.param}}</div>
-</template>`,
-				
-				'three': `
-<template component="full-component-example">
-	<div class="full-component-example">
-		<div>This is the html template for this tag, and may contain any html and vue code.</div>
-		<div>A vue value: {{some_vue_value}}</div>
-		<div>A simple counter: {{counter}} <button @click="addOneToCounter()">Add one to counter</button>
-		</div>
-	</div>	
+                <p>
+                    Have an NPM module you want to try out, require() it and it will be loaded from https://jspm.dev.
+                    As you can expect this has pro's and con's. 
+                </p>
 
-	<script>
-	// Write your vue component object like usual.
-	export default {	
-		data() {
-			return {
-				some_vue_value: 'value1',
-				counter: 0
-			}
-		},
-		mounted() {
-			console.log("Component is ready")
-		},
-		methods: {
-			addOneToCounter() {
-				this.counter += 1;
-			}
-		}
-	}
-	</${'script'}>
-</template>
-`
-
-
-				,'component_tag': `<template component="my-component" props="prop1,prop2">
-  <div>
-    <p>Template for my-component</p>
-  </div>
-  <script>
-  export default() {
-    data() {
-      return {
-        value: ''
-      }
-    },
-    mounted() {
-      // ..
-    },
-    methods: {
-      myMethod() {
-        //..
-      }
+                <example-code :code='`
+<template module="inspire-me">
+    <script>
+    var randomQuotes = require("random-quotes");
+    export default function () { 
+        var quote = randomQuotes();
+        return quote;
     }
-  }
-  </${'script'}>
+    </${"script"}>
 </template>
-`
-				,'component_source': `Vue.component('my-component', {
-  name: 'my-component',
-  template: \`<div>
-    <p>Template for my-component</p>
-  </div>\`,
-  props: ['prop1','prop2'],
-  data() {
-    return {
-      value: ''
+                `' :runner='`
+                <div v-if="quote">
+                    {{quote.body}}<br>- {{quote.author}}
+                </div>
+                <div v-else><em>Loading quote...</em></div>
+                <script>
+                var inspireMe = require("inspire-me");
+                return class vue { 
+                    quote = null;
+                    mounted() {
+                        this.quote = inspireMe();
+                    }
+                }
+                </${"script"}>`'></example-code>
+            
+            
+            
+            </example-code>
+
+
+            <h3 class="text-h5 mb-4 mt-4">Full example</h3>
+
+                <example-code :code='`
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"></${"script"}>
+    </head>
+    <body>
+        <!-- Vue Blocks mounting point -->
+        <app></app>
+
+        <template module="myLibrary">
+            <script>
+                var uniqid = require("uniqid");
+                export default {
+                    generateUniqueId() {
+                        return uniqid();
+                    }
+                }
+            </${"script"}>
+        </template>
+        <template component="app">
+            <div>
+                Unique id: {{unique_id}}
+            </div>
+
+            <script>
+                var myLib = require("myLibrary");
+
+                export default {
+                    data() {
+                        return {
+                            unique_id: myLib.generateUniqueId()
+                        }
+                    }
+                }
+            </${"script"}>
+        </template>
+    </body>
+</html>
+
+                `'></example-code>
+            </div>
+    </template>
+
+
+    <template url="/features/shortsyntax">
+            <div class="container">
+                <h1 class="text-h3 mb-4">Short syntax</h1>
+                
+                <p>
+                    Having to write `export default { data() { }, mounted() { }, methods: { }}` 
+                    all the time becomes a chore at some point. I wanted have the ability to 
+                    concentrate purely on what my component has and should be doing. So I saw
+                    an opportunity to shorten the component definition syntax a bit:
+                </p>
+                <example-code :code='`
+<template component="app">
+    <div>
+        {{property_1}} + {{property_2}} = {{sum}}
+        <button @click="clickButton()">Click here</button>
+    <script>
+    return class vue {
+        property_1 = 1
+        property_2 = 2
+
+        computed = {
+            sum() {
+                return this.property_1 + this.property_2
+            }
+        }
+
+        clickButton() {
+            alert("You clicked the button");
+        }
     }
-  },
-  mounted() {
-    // ..
-  },
-  methods: {
-    myMethod() {
-      //..
-    }
-  }  
-})
-`
-				,'url_tag': `<template url="/my-url">
-  <div>
-    <p>Template for my-url</p>
-  </div>
-  <script>
-  export default {
-    data() {
-      return {
-        value: ''
-      }
-    },
-    mounted() {
-      // ..
-    },
-    methods: {
-      myMethod() {
-        //..
-      }
-    }    
-  }
-  </${'script'}>
-</template>`
-		
-				,'url_source' : `var router = new VueRouter({
-  routes: [
-    {
-      path: '/my-url',
-      component: {
-        name: 'url-handler--my-url'
-        template: \`<div>
-          <p>Template for my-url</p>
-        </div>\`,
-        data() {
-          return {
-            value: ''
-          }
-        },
-        mounted() {
-          // ..
-        },
-        methods: {
-          myMethod() {
-            //..
-          }
-        }  
-      }
-    }
-  ]
-})
+    </${"script"}>
+</template>`'></example-code>
 
-var rootInstance = new Vue({
-  router: router
-}).$mount('app')
-				`
+            <p class="mt-4">
+                As you can see using a class greatly reduces the amount of extra characters that
+                need to be typed. 
+            </p>
+            <p>
+                The short-syntax mode is triggered by typing `return class vue` and then typing 
+                a javascript class definition. Vue Blocks is able to take this class definition
+                and rewrite it to a classic vue component definition. Please be aware that
+                components defined this way will only work in modern browser that support `class property`
+                syntax.
+            </p>
+            <p>If you encounter this and want it converted to classical vue you may use the 
+                <a href="https://fluxfx.nl/htools/vue-conv">online vue converter</a>
+            </p>
 
 
 
-
-			}
-			</script>
-		</template>
-	
-		<template component="app">
-			<div class="app">
-				<nav>
-				<ul class="nav nav-tabs">
-					<examples-navigation></examples-navigation>
-				</ul>
-				</nav>
-
-				<router-view></router-view>
-			</div>
-
-		</template>
-
-		<template src="examples-navigation.vue"></template>
+            </div>
+    </template>
 
 
-		<template url="/">
-			<div>
-				<h2>The short story</h2>
-				<p>
-					 Vue blocks allow you to easily build 
-					 a single page application using simple
-					 building blocks:
-				</p>
+    <template url="/features/template-src">
+            <div class="container">
+                <h1 class="text-h3 mb-4">Loading of vue and vue-block files</h1>
+                <p>
+                    We have been talking about single html document a lot, but we do 
+                    support working with a bunch of files. 
+                </p>
+                <p>
+                    With `&lt;template src="..."&gt;` you may load Vue Single File components and/or
+                    html documents that contain Vue Blocks style components. the distinction is made 
+                    by the extension you are trying to load.
+                </p>
 
-				<p>
-				1. Define components<br>
-				<pre>{{snippets.one}}</pre>
-				</p>
+                <h3 class="text-h5 mb-4">Loading Vue files</h3>
+                <example-code :code='`
+<template src="https://raw.githubusercontent.com/j-angnoe/vue-blocks/master/examples/example-vue-file.vue">
+</template>                
 
-				<p>
-				2. Define your routes<br>
-				<pre>{{snippets.two}}</pre>
-				</p>
+<template component="app">
+    <div>
+        Component from github:
+        <example-vue-file></example-vue-file>
+    </div>
+</template>
+                `'></example-code>
 
-				<p>3. Build the future web!
-				</p>
-
-
-
-
-				<h2>Components</h2>
-
-				<p>Each component is defined inside a &lt;template component&gt; tag. Inside this tag you may write html and a script-tag containing the component code. 
-
-				<pre>{{snippets.three}}</pre>
-
-
-				</p>
-
-				<h2>In other words:</h2>
-
-				<table class="table">
-					<tr>
-						<td style="width:40%">
-							<pre>{{snippets.component_tag}}</pre>
-						</td>
-						<td style="text-align:center;vertical-align:middle;font-size:40px;">
-							&#8594;
-						</td>
-						<td style="width:40%">
-							<pre>{{snippets.component_source}}</pre>
-						</td>
-					</tr>
-
-					<tr>
-						<td style="width:40%">
-							<pre>{{snippets.url_tag}}</pre>
-						</td>
-						<td style="text-align:center;vertical-align:middle;font-size:40px;">
-							&#8594;
-						</td>
-						<td style="width:40%">
-							<pre>{{snippets.url_source}}</pre>
-						</td>
-					</tr>
-
-				</table>
+                <p class="mt-4">
+                    Known limitations of loading vue files: Only the processing of HTML, CSS and javascript are supported. 
+                    Require statements will be processed according to the <router-link to="/examples/require">rules stated here.</router-link>
+                    Import statements will break it.
+                </p>
 
 
+                <h3 class="text-h5 mb-4">Loading Vue Blocks file</h3>
 
-				<h2>Why?</h2>
-				<p>Vue blocks was developed to quickly build single page prototypes.</p>
+                <example-code :code='`
+<template src="https://raw.githubusercontent.com/j-angnoe/vue-blocks/master/examples/sample-components.html">
+</template>                
 
-				<h2>What's in it?</h2>
-				<ul>
-					<li>Vue 2.6.11</li>
-					<li>Vue Router 2.8.1</li>
-				</ul>
+<template component="app">
+    <div>
+        Sample components contains:<br><br>
 
-				<h2>Undocumented subjects</h2>
-				<p><ul>
-				<li>template component props attribute</li>
-				<li>Working with route params</li>
-				</ul>
-				</p>
-			</div>
-			<script>
-			var snippets = require('snippets');
+        Sample1: <br>
+        <sample1></sample1>
+        Sample2: <br>
+        <sample2></sample2>
 
-			export default {
-				mounted() {
-					
-				},
-				data() {
-					return {
-						snippets: snippets
+        <br>And it also should load /sample-components2.html:<br>
+        Sample3: <br>
+        <sample3></sample3>
+        Sample4: <br>
+        <sample4></sample4>
+    </div>
+</template>`'></example-code>
+
+            <p>So recursive loading of sources is possible. Also resolution of relative pathnames relative to the
+                file that was loaded is implemented.</p>
+
+
+            </div>
+    </template>
+
+
+    <template component="example-code" props="code">
+        <div class="container">
+            <v-btn color="lightgreen" dense @click="copyToClipboard">
+                <v-icon class="mr-2">mdi-clipboard</v-icon>
+
+                Copy to clipboard
+            </v-btn>
+            <v-dialog
+                v-if="!('dont-run' in $attrs)"
+                v-model="dialog"
+                width="600px"
+                >
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                    color="primary"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                    >
+                        <v-icon class="mr-2">mdi-play</v-icon>
+                    Run example
+                    </v-btn>
+                </template>
+                <v-card>
+                    <v-toolbar>
+                        <v-subheader>Running example</v-subheader>
+                        <v-spacer>
+                        <v-btn @click="dialog = false" icon>
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-toolbar>
+                    <v-divider></v-divider>
+                    <iframe v-if="dialog" :src="iframeSource()" style="display: block; border:none; padding:20px; width:600px; height:600px;"></iframe> 
+                </v-card>
+            </v-dialog>
+            <v-snackbar
+                v-model="snackbar"
+                >
+                {{ snackbarMessage }}
+
+                <template v-slot:action="{ attrs }">
+                    <v-btn
+                    color="pink"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                    >
+                    Close
+                    </v-btn>
+                </template>
+            </v-snackbar>
+            
+            <highlightjs :code="code"></highlightjs>
+        </div>
+        <script>
+            return class vue {
+                dialog = false;
+                snackbarMessage = false;
+                snackbar = false;
+
+                getTemplate() {
+						var code = this.code;
+						var anchor = document.createElement('a');
+						anchor.href = '../../dist/vue-blocks.js';
+
+						var path_to_vue_blocks = anchor.href;
+						var protocol = anchor.protocol;
+
+                        code = code.replace(/https:\/\/unpkg.com\/vue-blocks\/dist\/vue-blocks.js/g, path_to_vue_blocks);	
+
+                        if (code.match(/<html/) && !code.match(path_to_vue_blocks)) {
+                            var vueBlocksUrls = `<script src="${path_to_vue_blocks}"></${'script'}>`;
+                            return code.replace(/<\/head>/, vueBlocksUrls + '</head>');
+                        }
+
+                        if (!code.match('<app>')) {
+                            code = '<app></app>' + code;
+                        }
+
+                        if (this.$attrs.runner) {
+                            code = '<template component="app">' + this.$attrs.runner + '</template>' + code;
+                        } 
+                        if (!code.match('template component="app"')) {
+                            code = '<template component="app"><div>default app <router-view></router-view></div></template>' + code;
+                        }
+
+						return `<html>
+<head>
+	<script src="${path_to_vue_blocks}"></${'script'}>		
+</head>
+<body>
+
+    ${code}
+    
+    
+</body>
+</html>`;
 					}
-				}
-			}
-			</script>
-		</template>
-	</body>
+
+                iframeSource() {
+                    var dataUrl  = "data:text/html;charset=utf-8,";
+                
+                    var template = this.getTemplate();
+
+                    return dataUrl + escape(template);
+                }
+
+                copyToClipboard() {
+                    var el = document.createElement('textarea');
+                    document.body.appendChild(el);
+                    el.innerHTML = this.code;
+                    el.style.height = '0px';
+                    el.select();
+                    document.execCommand('copy');
+                    this.snackbarMessage = 'Copied to clipboard!';
+                    this.snackbar = true;
+                    document.body.removeChild(el);
+                }
+            }
+        </script>
+    </template>
+
+    <script src="../../dist/vue-blocks.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/styles/default.min.css">
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/highlight.min.js"></script>
+
+    <script>
+        Vue.use(hljs.vuePlugin);
+
+        window.createApp = function() {
+            return {
+                vuetify: new Vuetify()
+            }
+        }
+    </script>
+    <style>code { 
+        background: transparent !important; 
+        font-weight: normal !important;
+        color: inherit !important;
+    }</style>
+
+
+</body>
+
 </html>

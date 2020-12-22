@@ -30,7 +30,7 @@
                             v-model="source" 
                             debounce="500" 
                             wrap="off"
-                            spellc heck="false" 
+                            spellcheck="false" 
                             @keyup.ctrl.enter="run()"
                             @keyup.meta.enter="run()"
                             @keydown.ctrl.s.prevent.stop="run()"
@@ -107,6 +107,12 @@
 
 						var path_to_vue_blocks = anchor.href;
 						var protocol = anchor.protocol;
+
+                        var vueBlocksUrls = `<script src="${path_to_vue_blocks}"></${'script'}>`;
+
+                        if (code.match(/<html/)) {
+                            return code.replace(/<\/head>/, vueBlocksUrls + '</head>');
+                        }
 
 						return `<html>
 <head>
