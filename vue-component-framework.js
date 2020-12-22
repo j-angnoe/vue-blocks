@@ -95,11 +95,12 @@ function domComponentCollectorRaw(scriptVariables) {
             }
     		var matches = [];
 
-            var require_regex = /require\s*\(['"]([^'"]+)['"]\)/ig;
+            var require_regex = /require\s*\(['"]([^'"]+)['"]\)(\.)?/ig;
 
     		code.replace(require_regex, (...match) => {
                 if (!window[match[1]]) {
-                    matches.push(preload_module(match[1]));
+                    var returnDefault = match[2] ? false : true;
+                    matches.push(preload_module(match[1], returnDefault));
                 } else {
                     matches.push(window[match[1]]);
                 }
@@ -197,7 +198,7 @@ function domComponentCollector(componentName, scriptVariables) {
             }
             return selectors.split(',').map(x => {
                 // :scope will point to self.
-                return '*[scoped-css-' + componentName + '] ' + x.replace(':scope', '').replace(/^\s+/,'');
+                return '*[scoped-css-' + componentName + '] ' + x.replace(/:(scope|root)/, '').replace(/^\s+/,'');
             }).join(',') + '{';
         });
         // console.log(scopedStyle, 'scoped Style');
@@ -270,15 +271,18 @@ function loadVueFiles(context, registrar, scriptVariables) {
     return Promise.all(components.map(function(comp) {
         var url = comp.getAttribute('src');
 
+        if (!registrar) {
+            registrar = Vue.component.bind(Vue);
+        }
+
         if (url.match(/\.vue$/)) {
             var componentName = url.split('/').pop().replace('.vue','');
 
             // console.log(componentName);
 
-            if (!registrar) {
-                registrar = Vue.component.bind(Vue);
-            }
+            
             registrar(componentName, function(resolve, reject) {
+
                 fetch(url).then(r => r.text()).then(source => {
                     // console.log(source);
                     source = source.replace(/<\/?template.*?>/g,'')
@@ -292,8 +296,21 @@ function loadVueFiles(context, registrar, scriptVariables) {
                 });
             })
         } else {
+            if (context.relativeBase) {
+                if (~url.indexOf('://')) {
+                    // do nothing
+                } else if (url.substr(0,1) === '/') {
+                    url = context.absoluteBase + url;
+                } else {
+                    url = context.relativeBase + url;
+                }
+            }
             return fetch(url).then(r => r.text()).then(source => {
                 var el = document.createElement('template');
+                var anchor = document.createElement('a');
+                anchor.href = url;
+                el.content.relativeBase = anchor.protocol + '//' + anchor.host + anchor.pathname.replace(/\/[^\/]+$/,'/');
+                el.content.absoluteBase = anchor.protocol + '//' + anchor.host;
                 el.innerHTML = source;
                 return loadVueComponents(el.content, function (c, obj) {
                     registrar(c, obj);
@@ -329,7 +346,7 @@ function collectRoutes(context, handled) {
             }
         }
 
-        var componentName = ('url-handler-' + url.replace(/^\/$/, 'index')).replace(/[^a-z0-9_]+/g, '-');
+        var componentName = ('url-handler-' + url.replace(/^\/$/, 'index')).replace(/[^a-z0-9_]+/ig, '-');
 
         routeObject.component = domComponentCollector.call(el, componentName)
 
@@ -401,8 +418,8 @@ function require_script(name) {
     throw new Error("Cannot require asynchronously: " + name);  
 };
 
-function preload_module(name) {
-    var fn = 'resolveImport' + (Math.random()*(new Date).getTime()).toString(16);
+function preload_module(name, returnDefault) {
+    var fn = 'resolveImport' + Math.round(Math.random()*(new Date).getTime()).toString(16).substr(0,8);
     return new Promise(resolve => {
         window[fn] = resolve;
         var script = document.createElement('script');
@@ -416,7 +433,11 @@ function preload_module(name) {
         document.body.appendChild(script);
     }).then(result => {
         delete window[fn];
-        window[name] = result.default && result.default.default || result.default;
+        var ret = result;
+        if (returnDefault) {
+            ret = result.default && result.default.default || result.default;;
+        }
+        window[name] = ret;
     });
 }
 function commonJsExec(code, scriptVariables) {
