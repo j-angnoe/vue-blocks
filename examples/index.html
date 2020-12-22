@@ -145,7 +145,7 @@
             return class vue {
                 package = null;
                 mounted() {
-                    fetch('../../package.json').then(r => r.json()).then(data => {
+                    fetch('../package.json').then(r => r.json()).then(data => {
                         this.package = data
                     })
                 }
@@ -811,7 +811,7 @@ window.myFunction = function () {
                 getTemplate() {
 						var code = this.code;
 						var anchor = document.createElement('a');
-						anchor.href = '../../dist/vue-blocks.js';
+						anchor.href = '../dist/vue-blocks.js';
 
 						var path_to_vue_blocks = anchor.href;
 						var protocol = anchor.protocol;
@@ -870,7 +870,7 @@ window.myFunction = function () {
         </script>
     </template>
 
-    <script src="../../dist/vue-blocks.js"></script>
+    <script src="../dist/vue-blocks.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/styles/default.min.css">
     <script src="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/highlight.min.js"></script>
