@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', done => {
     
         // @todo remove this, (leak routes to window for debugging.)
         window.routes = routes
-
     
         var appInstance = new Vue({
-            router: router
+            ...(window.createApp && window.createApp() || {}),
+            router: router,
         }).$mount('app')
     })
 
