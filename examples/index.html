@@ -870,6 +870,14 @@ window.myFunction = function () {
         </script>
     </template>
 
+    <template url="/">
+        <script>return class vue { 
+            mounted() {
+                this.$router.push('/intro/intro');
+            }
+        }
+        </script>
+    </template>
     <script src="../dist/vue-blocks.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.4.1/styles/default.min.css">
