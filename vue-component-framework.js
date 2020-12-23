@@ -257,7 +257,7 @@ function loadVueComponents(context, registrar, scriptVariables) {
         if (registrar) {
           registrar(componentName, object);
         } else {
-          Vue.component(componentName, object);
+          defaultRegistrar(componentName, object);
         }
     });
 
@@ -272,7 +272,7 @@ function loadVueFiles(context, registrar, scriptVariables) {
         var url = comp.getAttribute('src');
 
         if (!registrar) {
-            registrar = Vue.component.bind(Vue);
+            registrar = defaultRegistrar;
         }
 
         if (url.match(/\.vue$/)) {
@@ -472,9 +472,21 @@ function commonJsExec(code, scriptVariables) {
 	}
 }
 
+var defaultRegistrar = function (componentName, definition) {
+    if (window.Vue) {
+        window.Vue.component(componentName, definition);
+    } else { 
+        console.error('Could not register ' + componentName);
+        console.error('Please call VueBlocks.setRegistrar(Vue.component.bind(Vue))');
+    }
+};
+
 module.exports = {
 	commonJsExec: commonJsExec,
 	loadModules: loadModules,
 	loadVueComponents: loadVueComponents,
-	collectRoutes: collectRoutes
+    collectRoutes: collectRoutes,
+    setRegistrar(registrar) {
+        defaultRegistrar = registrar;
+    }
 }

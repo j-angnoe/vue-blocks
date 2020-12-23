@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Vue Blocks Test Page Plugin VueRouter</title>
+        <script src="../../dist/plugin.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <router-view></router-view>
+        </div>
+        
+        <template component="sample1">
+            <div> {{ message }} </div>
+            <script>
+                return class vue { message = 'Success: VueBlocks plugin worked!' }
+            </script>
+        </template>
+        <template url="/page2">
+            <div>Success: Page 2 werkt ook</div>
+        </template>
+    </body>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-router"></script>
+
+    <script>
+        Vue.use(VueBlocks);
+        Vue.use(VueRouter);
+
+        new Vue({
+            el:'#app-container',
+            router: new VueRouter({
+                routes: [
+                    { 
+                        path: '/', 
+                        component: { 
+                            template: `<div>
+                                Hoe is het?
+                                <sample1></sample1>
+                                <router-link to="/page2">Page 2</router-link>
+                            </div>` 
+                        } 
+                    }
+                ]
+            })
+        });        
+    </script>
+
+</html>

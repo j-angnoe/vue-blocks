@@ -1,46 +1,47 @@
-var vuecf = require('./vue-component-framework')
-var loadModules = vuecf.loadModules
-var loadVueComponents = vuecf.loadVueComponents
-var collectRoutes = vuecf.collectRoutes
-var Vue = require('vue/dist/vue')
-var VueRouter = require('vue-router').default
-Vue.use(VueRouter)
+// Export Vue Blocks as a Vue Plugin.
 
-// Start the application application
-document.addEventListener('DOMContentLoaded', done => {
-    loadModules()
-    Promise.resolve(loadVueComponents()).then(done => {
-        var routes = collectRoutes();
-        var router = new VueRouter({
-            routes: routes
+import VueBlocks from './vue-component-framework';
+
+VueBlocks.install = function (Vue, options) {
+    options = {async: true, ...options};
+
+    VueBlocks.setRegistrar(Vue.component.bind(Vue));
+    VueBlocks.loadModules();
+
+    var promise = VueBlocks.loadVueComponents();
+
+    // This is necessary for resolving template[src] stuff.
+    
+    var pendingMount = null;
+    var originalMount = null;
+
+
+    if (options.async) { 
+        pendingMount = null;
+        originalMount = Vue.prototype.$mount;
+
+        Vue.prototype.$mount = function (...args) {
+            var self = this;
+            if (self.$router) { 
+                self.$router.addRoutes(VueBlocks.collectRoutes());
+            }
+            pendingMount = function() {
+                Vue.prototype.$mount = originalMount;
+                self.$mount(...args);
+            };
+        }
+
+        promise = promise.then(done => {
+            pendingMount && pendingMount();
+            originalMount && (Vue.prototype.$mount = originalMount);
+
         })
-        
-    
-        // @todo remove this, (leak routes to window for debugging.)
-        window.routes = routes
-    
-        var appInstance = new Vue({
-            ...(window.createApp && window.createApp() || {}),
-            router: router,
-        }).$mount('app')
-    })
+    } 
 
+    // not that anyone does anything.
+    return promise;
+};
 
-})
+window.VueBlocks = VueBlocks;
 
-var isVue2 = Vue.version.match(/^2/);
-
-if (!isVue2) {
-    Vue1_to_2();
-}
-
-
-function Vue1_to_2() {
-    Vue.component('router-link', {
-        template: `<a v-link="{path: to}"><slot /></a>`,
-        props: ['to']
-    })
-}
-
-
-window.Vue = Vue
+export default VueBlocks;

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Vue Blocks Test Page Plugin Async</title>
+        <script src="../../dist/plugin.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+        <template component="app">
+            <div>
+                Success: VueBlocks plugin async worked!
+                <example-vue-file></example-vue-file>
+                <sample1></sample1>
+                <sample2></sample2>
+                <sample3></sample3>
+                <sample4></sample4>
+            </div>
+        </template>
+        <template src="example-vue-file.vue"></template>
+        <template src="example-components.html"></template>
+    </body>
+
+
+
+    <script src="https://unpkg.com/vue"></script>
+
+    <script>
+        Vue.use(VueBlocks);
+
+        new Vue({
+            el:'#app-container'
+        });        
+    </script>
+
+</html>

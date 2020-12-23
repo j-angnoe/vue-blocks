@@ -7,8 +7,12 @@
     "start": "static .;",
     "test": "cypress run",
     "cypress": "cypress open -P .",
-    "build": "parcel build ./index.js -o dist/vue-blocks.js --no-source-maps",
-    "watch": "parcel watch ./index.js -o dist/vue-blocks.js --no-hmr --no-source-maps",
+    "build:bundle": "parcel build ./bundled.js -o dist/vue-blocks.js --no-source-maps",
+    "build:plugin": "parcel build ./index.js -o dist/plugin.js --no-source-maps",
+    "watch:plugin": "parcel watch ./index.js -o dist/plugin.js --no-hmr --no-source-maps",
+    "watch:bundle": "parcel watch ./bundled.js -o dist/vue-blocks.js --no-hmr --no-source-maps",
+    "watch" : "npm run watch:plugin & npm run watch:bundle",
+    "build" : "npm run build:bundle && npm run build:plugin",
     "prepublish": "npm run test && npm run build"
   },
   "repository": {
