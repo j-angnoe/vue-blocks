@@ -231,61 +231,41 @@
 
             <h2 class="text-h5 mb-4">Drop in script</h2>
                 <p>
-                    To get started, add `<code>&lt;script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"&lt;&gt;/script&gt;</code>` to your
+                    For prototypes, PoC's and demos. Instead of your vue script tag add `<code>&lt;script src="https://unpkg.com/vue-blocks/dist/vue-blocks.js"&lt;&gt;/script&gt;</code>` to your
                     HTML document. Add `<code>&lt;app&gt;&lt;/app&gt;</code>` to your body and define a component named `app` to begin
-                    with.
+                    with. Vue 2.6 and VueRouter 2.8 are included. No tooling required.
                 </p>
                 <p>You may have a look at <router-link to="/intro/quick-start">Quick Start</router-link> for a full example html.</p>
+            
+            <h2 class="text-h5 mb-4">As Vue Plugin</h2>
+            <p>
+                You may install vue-blocks via npm: `npm install vue-blocks`. To use VueBlocks in javascript:
+
+                <example-code :code='`
+import VueBlocks from "vue-blocks";
+
+Vue.use(VueBlocks)
+                `'></example-code>
+
+                Alternatively you may use the HTML method:
+                <example-code :code='`
+<script src="http://unpkg.com/vue-blocks/dist/plugin.js"></${"script"}>
+<script src="http://unpkg.com/vue"></${"script"}>
+
+<script>
+Vue.use(VueBlocks);
+new Vue({
+    el: "#app"
+});
+</${"script"}>
+                `'></example-code>
+            </p>
             
             <h2 class="text-h5 mb-4">Via Github</h2>
             <p>
                 The repository is public to all, feel free to clone <a href="https://github.com/j-angnoe/vue-blocks" target="_blank">https://github.com/j-angnoe/vue-blocks</a>
             </p>
 
-            <h2 class="text-h5 mb-4">Via NPM</h2>
-            <p>
-                I maintain the package `vue-blocks` on npm: <a href="https://npmjs.org/vue-blocks" target="_blank">https://npmjs.org/vue-blocks</a>
-                To install it run <pre>npm install vue-blocks</pre>
-            
-                To use it in an existing project add something like this to your main javascript file:
-
-                <example-code :code="`
-                // app.js
-import Vue from 'vue/dist/vue.common';
-
-window.Vue = Vue;
-
-var VueBlocks = require('vue-blocks/vue-component-framework');
-
-VueBlocks.loadModules();
-VueBlocks.loadVueComponents();
-
-// alternative 1: provide a context / root element
-// VueBlocks.loadVueComponent(document.body)
-
-/**
- * alternative 2: custom registering
- * 
- * VueBlocks.loadVueComponent(document.body, function(compName, compDef) {
- *      console.log('Vue Block registers ' + componentName)
- *      Vue.component(componentName, componentDefinition);
- * });
- **/
-
-import VueRouter from 'vue-router';
-
-var routes = VueBlocks.collectRoutes();
-var router = new VueRouter({
-  routes: routes
-});
-
-Vue.use(VueRouter);
-
-const app = new Vue({
-    el: '#my-app',
-    router
-});`" dont-run></example-code>
-            </p>
 
 
         </div>

@@ -1,28 +1,11 @@
 # Vue Blocks
 
-This is a drop-in script that enables you to write multiple Vue components and routes 
-in a html file. No external tooling required. It's the ease-of-use of 
-.vue files without being limited to one component per file. It's my weapon of choice for
-quick and simple prototypes. For this purpose Vue and VueRouter are included.
+Vue Blocks is a Vue Plugin that extracts and registers vue components from an HTML 
+document, without external tooling. This is done by looking for `<template component="">` tags. 
+Within this tag you may write an HTML template, scoped styles and vue component javascript, just like you do when
+writing Vue Single File Components. Lots of benefit in just over 10 KB ([current size](https://img.shields.io/github/size/j-angnoe/vue-blocks/dist/plugin.js))
 
-Take a look at some examples: 
-- Single page [TodoMVC example](https://fluxfx.nl/vue-blocks/examples/todomvc.html) ([source](./examples/todomvc.html))
-- [Try it online](https://fluxfx.nl/vue-blocks/examples/try-it.html) ([source](./examples/try-it.html))
-- Check out this demo fiddle: https://jsfiddle.net/o48L0y9j/
-
-## Usage
-
-Add `<script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script>` to your HTML file 
-and start writing your Vue application. Then you add `<app></app>` to body and define a app component.
-You may copy-and-paste the [Quick Start HTML Template](#quick-start-html-template) provided 
-below, are have a look at the [examples](./examples/index.html).
-
-## Documentation
-Can be found here: [./docs/index.md](./docs/index.md)
-
-## Write components
-
-Vue components can be defined by writing something like.
+## The syntax
 
 ```html
 <template component="my-component">
@@ -45,19 +28,61 @@ Vue components can be defined by writing something like.
 					my_variable: 'my_value'
 				}
 			},
-			mounted() {
-				// ... 
-			},
 			methods: {
-				clickButton() {
-					...
-				}
+				clickButton() {}
 			}
 		}
 	</script>
 </template>
 ```
 
+## Usage
+
+There are a few ways you can add this layer to your application:
+
+In HTML as Plugin:
+```html
+<script src="http://unpkg.com/vue-blocks/dist/plugin.js"></script>
+<script>
+Vue.use(VueBlocks);
+...
+</script>
+```
+
+Using the bundled version which included Vue (2.6) and VueRouter (2.8): 
+
+```html
+<script src="http://unpkg.com/vue-blocks/dist/vue-blocks.js"></script>
+<app></app>
+<template component="app">
+	<router-view></router-view>
+</template>
+<template url="/">
+	<div>Let's get going</div>
+</template>
+```
+
+Using it in an existing Javascript application:
+
+```js
+import VueBlocks from 'vue-blocks';
+Vue.use(VueBlocks);
+```
+
+## Examples and Demos
+
+Take a look at some examples: 
+- Demo/documentation site: https://fluxfx.nl/vue-blocks/examples/index.html
+- Single page [TodoMVC example](https://fluxfx.nl/vue-blocks/examples/todomvc.html) ([source](./examples/todomvc.html))
+- [Try it online](https://fluxfx.nl/vue-blocks/examples/try-it.html) ([source](./examples/try-it.html))
+- Check out this demo fiddle: https://jsfiddle.net/o48L0y9j/
+
+You may copy-and-paste the [Quick Start HTML Template](#quick-start-html-template) provided 
+below, are have a look at the [examples](./examples/index.html).
+
+## Documentation
+- Demo/documentation site: https://fluxfx.nl/vue-blocks/examples/index.html
+- Also check out [./docs/index.md](./docs/index.md)
 
 ## Using the router
 Begin by writing some routes:
@@ -156,12 +181,15 @@ This example includes some components and a few urls.
 - Include Vue 2.6.12 and VueRouter 2.8 (check [package.json](./package.json) for most recent versions)
 
 - Mutliple component
-- Auto-mount `<app>` component
+- Auto-mount `<app>` component (bundled version)
+
 - `<template component="component" props="prop1, prop2">`
 	component props syntax
 
 - `<template url="/url/:param1/:param2">` 
 	url with param auto register with VueRouter.
+
+- Scoped styles, add `<style scoped>` to your template. 
 
 - `<template module="moduleName">` 
 	define 'fake' javascript modules that can be require()'d later on.
