@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "static .;",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cypress run",
+    "cypress": "cypress open -P .",
     "build": "parcel build ./index.js -o dist/vue-blocks.js --no-source-maps",
     "watch": "parcel watch ./index.js -o dist/vue-blocks.js --no-hmr --no-source-maps",
-    "prepublish": "npm run build"
+    "prepublish": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",

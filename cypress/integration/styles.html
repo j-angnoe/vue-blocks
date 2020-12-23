@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue Blocks Test Page Styles</title>
+        <script src="../../dist/vue-blocks.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+        <template component="app">
+            <div>
+                <component-1></component-1>
+                <component-2></component-2>
+            </div>
+        </template>
+
+        <template component="component-1">
+            <div>
+                <div class="component1 blue-global">
+                    comp1: This should be blue
+                </div>
+                <div class="component1 unaffected">
+                    comp1: This should remain black.
+                </div>
+            </div>
+            <style>
+                .blue-global {
+                    color: blue;
+                }
+                .blue-global:after {
+                    content: '(comp1 blue-global style applied)';
+                }
+            </style>
+        </template>
+        <template component="component-2">
+            <div class="component2-root">
+                <div class="component2 unaffected">
+                    comp2: This should be red.
+                </div>
+                <div class="component2 blue-global">
+                    comp2: This should be blue (inheritted from comp1)
+                </div>
+            </div>
+            <style scoped>
+                :root {
+                    background: rgb(200,200,200);
+                }
+
+                :scope {
+                    color: rgba(50,50,50);
+                }
+                .unaffected { 
+                    color: red;
+                }
+                .unaffected:after {
+                    content: ' (comp2 unaffected scoped style works)';
+                }
+            </style>
+        </template>
+    </body>
+</html>

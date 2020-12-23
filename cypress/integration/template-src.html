@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue Blocks Test Page Template src</title>
+        <script src="../../dist/vue-blocks.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+        <template component="app">
+            <div>
+                <example-vue-file></example-vue-file>
+                <sample1></sample1>
+                <sample2></sample2>
+                <sample3></sample3>
+                <sample4></sample4>
+            </div>
+        </template>
+
+        <template src="example-vue-file.vue"></template>
+
+        <template src="example-components.html"></template>
+    </body>
+</html>

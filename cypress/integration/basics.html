@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue Blocks Test Page 1</title>
+        <script src="../../dist/vue-blocks.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+        <template component="app">
+            <router-view></router-view>
+        </template>
+
+        <template url="/">
+            <div>Success: Showing you the main page</div>
+        </template>
+
+        <template url="/page2">
+            <div>Success: Showing you page 2</div>
+        </template>
+    </body>
+</html>

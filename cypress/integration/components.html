@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue Blocks Test Page Components</title>
+        <script src="../../dist/vue-blocks.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+        <template component="app">
+            <div>
+                <component-1></component-1>
+                <component-2></component-2>
+                <component-3></component-3>
+                <component-4></component-4>
+
+                <component-5 prop1="comp-5-prop1" prop2="comp-5-prop2"></component-5>
+                <component-6 prop1="comp-6-prop1" prop2="comp-6-prop2"></component-6>
+                <component-7 prop1="comp-7-prop1" prop2="comp-7-prop2"></component-7>
+                <component-8 prop1="comp-8-prop1" prop2="comp-8-prop2"></component-8>
+            </div>
+        </template>
+
+        <template component="component-1">
+            <div>
+                Just a template<br>
+                Success: Showing you component-1
+            </div>
+        </template>
+
+        <template component="component-2">
+            <div>
+                `Classic` vue components test<br>
+                Success: {{ title }} 
+            </div>
+            <script>
+                export default {
+                    data() {
+                        return {
+                            title: 'Showing you component-2'
+                        }
+                    },
+                    mounted() {
+
+                    }
+                }
+            </script>
+        </template>
+        <template component="component-4">
+            <div>
+                `Module-exports ` vue components test<br>
+                Success: {{ title }} 
+            </div>
+            <script>
+                module.exports = {
+                    data() {
+                        return {
+                            title: 'Showing you component-4'
+                        }
+                    },
+                    mounted() {
+
+                    }
+                }
+            </script>
+        </template>
+
+        <template component="component-3">
+            <div>
+                Short array syntax test<br>
+                Success: {{ title }} 
+            </div>
+            <script>
+                return class vue { 
+                    title = 'Showing you component-3'
+                }
+            </script>
+        </template>
+
+
+        <template component="component-5" props="prop1, prop2">
+            <div>
+                Just a template<br>
+                Success: Showing you {{prop1}}, {{prop2}}
+            </div>
+        </template>
+
+        <template component="component-6">
+            <div>
+                `Classic` vue components props test<br>
+                Success: Showing you {{prop1}}, {{prop2}}
+            </div>
+            <script>
+                export default {
+                    props: ['prop1', 'prop2'],
+                    data() {
+                        return {
+                            title: 'Showing you component-2'
+                        }
+                    },
+                    mounted() {
+
+                    }
+                }
+            </script>
+        </template>
+
+        <template component="component-7" props="prop1, prop2">
+            <div>
+                Short syntax component can receive template component props<br>
+                Success: Showing you {{prop1}}, {{prop2}}
+            </div>
+            <script>
+                return class vue { }
+            </script>
+        </template>
+
+        <template component="component-8">
+            <div>
+                Short syntax component with props defined in component<br>
+                Success: Showing you {{prop1}}, {{prop2}}
+            </div>
+            <script>
+                return class vue { 
+                    props = ['prop1', 'prop2'];
+                }
+            </script>
+        </template>
+    </body>
+</html>

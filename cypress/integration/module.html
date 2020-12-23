@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue Blocks Test Page Module</title>
+        <script src="../../dist/vue-blocks.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <app></app>
+        </div>
+
+        <template component="app">
+            <div>
+                <component-1></component-1>
+            </div>
+        </template>
+
+        <template component="component-1">
+            <div>
+                <pre>{{results.join("\n")}}</pre>
+            </div>
+            <script>
+                var test1 = require('windowUnit');
+                var test2 = require('myDefinedModule');
+                var test3 = require('myDefinedModule2');
+                var test4 = require('random-quotes');
+
+                return class vue {
+                    results = [];
+                    mounted() {
+                        this.results.push('Test: windowUnit = ' + test1);
+                        this.results.push('Test: myDefinedModule = ' + test2);
+                        this.results.push('Test: myDefinedModule = ' + test3);
+                        this.results.push('Test: random-quotes = ' + test4);
+                    }
+                }
+            </script>
+        </template>
+
+        <template module="myDefinedModule">
+            <script>
+                module.exports = 'myDefinedModule (module.exports)';
+            </script>
+        </template>
+
+        <template module="myDefinedModule2">
+            <script>
+                export default 'myDefinedModule2 (export default)';
+            </script>
+        </template>
+
+        <script>
+        window.windowUnit = 'windowUnitValue';
+        </script>
+    </body>
+</html>
