@@ -18,7 +18,7 @@
                 <v-toolbar> 
                     <v-icon color="green">mdi-cube</v-icon>
                     <v-spacer></v-spacer>
-                    <v-toolbar-title>Vue-Blocks</v-toolbar-title>
+                    <v-toolbar-title>Vue Blocks</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-content v-if="package">
                         v{{package.version}}
@@ -236,7 +236,7 @@
                     with. Vue 2.6 and VueRouter 2.8 are included. No tooling required.
                 </p>
                 <p>You may have a look at <router-link to="/intro/quick-start">Quick Start</router-link> for a full example html.</p>
-            
+                <p>You can also play with the syntax via the <a href="try-it.html">Online Editor</a></p>
             <h2 class="text-h5 mb-4">As Vue Plugin</h2>
             <p>
                 You may install vue-blocks via npm: `npm install vue-blocks`. To use VueBlocks in javascript:
@@ -245,7 +245,7 @@
 import VueBlocks from "vue-blocks";
 
 Vue.use(VueBlocks)
-                `'></example-code>
+                `' dont-run></example-code>
 
                 Alternatively you may use the HTML method:
                 <example-code :code='`
@@ -258,16 +258,13 @@ new Vue({
     el: "#app"
 });
 </${"script"}>
-                `'></example-code>
+                `' dont-run></example-code>
             </p>
             
             <h2 class="text-h5 mb-4">Via Github</h2>
             <p>
                 The repository is public to all, feel free to clone <a href="https://github.com/j-angnoe/vue-blocks" target="_blank">https://github.com/j-angnoe/vue-blocks</a>
             </p>
-
-
-
         </div>
     </template>
     <template url="/intro/quick-start">
@@ -744,6 +741,7 @@ window.myFunction = function () {
 
                     Copy to clipboard
                 </v-btn>
+                
                 <v-dialog
                     v-if="!('dont-run' in $attrs)"
                     v-model="dialog"
@@ -772,6 +770,10 @@ window.myFunction = function () {
                         <iframe v-if="dialog" :src="iframeSource()" style="display: block; border:none; padding:20px; width:600px; height:600px;"></iframe> 
                     </v-card>
                 </v-dialog>
+                <v-btn color="orange" v-if="!('dont-run' in $attrs)" dark small @click="tryItOut">
+                    <v-icon small class="mr-2">mdi-pencil</v-icon>
+                    Try it online
+                </v-btn>
             </v-btn-group>
             <v-snackbar
                 v-model="snackbar"
@@ -819,7 +821,7 @@ window.myFunction = function () {
                             code = '<template component="app">' + this.$attrs.runner + '</template>' + code;
                         } 
                         if (!code.match('template component="app"')) {
-                            code = '<template component="app"><div>default app <router-view></router-view></div></template>' + code;
+                            code = '<template component="app"><div><router-view></router-view></div></template>' + code;
                         }
 
 						return `<html>
@@ -854,6 +856,11 @@ window.myFunction = function () {
                     this.snackbar = true;
                     document.body.removeChild(el);
                 }
+
+                tryItOut() {
+                    window.localStorage['VueBlocksTryItSource'] = this.code;
+                    window.open('try-it.html');
+                }
             }
         </script>
     </template>
@@ -861,7 +868,7 @@ window.myFunction = function () {
     <template url="/">
         <script>return class vue { 
             mounted() {
-                this.$router.push('/intro/intro');
+                this.$router.replace('/intro/intro');
             }
         }
         </script>

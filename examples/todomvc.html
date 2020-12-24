@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
+        <!--
+            Original: https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue
+            Adapted to be contained in one HTML document.
+        -->
+
         <meta charset="utf-8">
 		<title>TodoMVC - Single page solution</title>
 		<link  href="http://todomvc.com/examples/vue/node_modules/todomvc-common/base.css" rel="stylesheet">
@@ -191,10 +196,23 @@
                 var STORAGE_KEY = 'todos-vuejs';
                 export default {
                     fetch: function () {
-                        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                        try { 
+                            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                        } catch (e) {
+                            console.error('Unable to use localStorage', e);
+                            return [
+                                { id: 1, title: 'Todo 1', completed: true },
+                                { id: 2, title: 'Todo 2', completed: false },
+                                { id: 3, title: 'Todo 3', completed: false }
+                            ]
+                        }
                     },
                     save: function (todos) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+                        try { 
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+                        } catch (e) { 
+                            console.error('Unable to use localStorage', e);
+                        }
                     }
                 };
             </script>
@@ -202,4 +220,4 @@
 
 
 	</body>
-</head>
+</html>

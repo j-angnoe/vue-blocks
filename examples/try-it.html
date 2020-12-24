@@ -1,85 +1,300 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Vue Blocks Framework</title>
-		<link  href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-		<!-- <script src="//unpkg.com/vue-blocks/dist/vue-blocks.js"></script> -->
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="#" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
-		<script src="../dist/vue-blocks.js"></script>
+        <script src="../dist/vue-blocks.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"></script>
 	</head>
 	<body>
+        <!-- app mount point -->
+        <app></app>
 
-		<div class="container-fluid">
-			<header>
-				<h1>Vue blocks - Try it out</h1>
-			</header>
-			<!-- app mount point -->
-			<app></app>
-        </div>
         <template component="app">
-            <router-view></router-view>
+
+            <v-app>
+
+                <v-app-bar app color="white">
+                    <v-app-bar-nav-icon v-if="drawer !== null" @click="drawer = !drawer"></v-app-bar-nav-icon>
+                    <v-icon color="green">mdi-cube</v-icon>
+                    <v-toolbar-title class="ml-3">Vue Blocks Editor</v-toolbar-title>
+                    <div v-if="package" class="ml-3">(v{{package.version}})</div>
+                    <a href="index.html" class="ml-3">Return to docs</a>
+                    <v-spacer></v-spacer>
+
+                    <v-btn icon
+                        href="https://github.com/j-angnoe/vue-blocks"
+                        target="_blank"
+                        title="Vue-blocks on github"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"></path></svg>
+                    </v-btn>
+                </v-app-bar>
+
+                <v-main>
+                    <v-container fluid>
+                        <router-view :drawer="drawer" @drawer="drawer=$event"></router-view>
+                    </v-container>
+                </v-main>
+            </v-app>
+            <script>
+                return class vue {
+                    package = null;
+                    drawer = null;
+                    mounted() {
+                        fetch('../package.json').then(r => r.json()).then(data => {
+                            this.package = data
+                        })
+                    }
+                }
+            </script>
         </template>
-        <template url="/">
-			<div>
-				<div class="row">
-					<div class="col-sm-6">
-                        <button @click="source = emptySource">Clear</button>
-                        <button @click="source = defaultSnippet">Restore default</button>
-                        <button @click="run()" title="You may also hit Ctrl+Enter or Ctrl-S to run ;-)">Run</button>
-                        <textarea 
+        <template url="/" props="drawer">
+			<v-row>
+                <v-navigation-drawer
+                    :value="drawer || false"
+                    app
+                    >
+                    <v-toolbar>
+                        <v-toolbar-title>Menu</v-toolbar-title>
+                    </v-toolbar>
+                    <v-list>
+                        <v-list-item @click="source = emptySource">
+                            <v-list-item-content >Clear script</v-list-item-content>
+                        </v-list-item>
+                        <v-list-item @click="source = defaultSnippet">
+                            <v-list-item-content >Restore default example</v-list-item-content>
+                        </v-list-item>
+
+                        <v-list-item @click="openTodoMVC(); closeDrawer()">
+                            <v-list-item-content >Open TodoMVC example</v-list-item-content>
+                        </v-list-item>
+
+                        
+                    </v-list>
+                </v-navigation-drawer> 
+				<v-col cols="6" class="editor-container" v-ctrl-s="run">
+                        <v-btn
+                            color="red"
+                            rounded
+                            dark
+                            absolute
+                            bottom
+                            dense
+                            right
+                            fab
+                            style="bottom: 24px; right: 24px;"
+                            @click="run"
+                            title="You may also hit Ctrl+Enter or Ctrl-S to run ;-)"
+                        >
+                            <v-icon>mdi-play</v-icon>
+                        </v-btn>
+
+                        <v-menu offset-y top>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                color="orange"
+                                rounded
+                                dark
+                                absolute
+                                bottom
+                                dense
+                                right
+                                fab
+                                style="bottom: 96px; right: 24px;"
+                                v-bind="attrs"
+                                v-on="on"
+                                >
+                                    <v-icon>mdi-plus</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-item @click="addComponent()">
+                                    <v-list-item-title>
+                                        Add component
+                                    </v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click="addRoute()">
+                                    <v-list-item-title>
+                                        Add route
+                                    </v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click="openDrawer()">
+                                    <v-list-item-title>
+                                        Open menu
+                                    </v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                            </v-menu>
+                        <codemirror 
+                            :options="{
+                                mode: 'text/html',
+                                tabSize: 3,
+                                indentUnit: 3,
+                                smartIndent: true,
+                                indentWithTabs: true,
+                                lineNumbers: true,
+                                line: true,
+                                extraKeys: {
+                                    'Ctrl-Enter': run,
+                                    'Cmd-Enter': run
+                                }
+                            }"
                             v-model="source" 
-                            debounce="500" 
-                            wrap="off"
-                            spellcheck="false" 
+                            ref="codemirror"
                             @keyup.ctrl.enter="run()"
                             @keyup.meta.enter="run()"
                             @keydown.ctrl.s.prevent.stop="run()"
                             @keydown.meta.s.prevent.stop="run()"
                             >
 
-						</textarea>	
-					</div>
-					<div class="col-sm-6" style="height:100%;">
+                        </codemirror>	
+                    </v-col>
+					<v-col cols=6>
+                        <div v-if="!in_sync">Your code has changed. <a @click="run()">Click here to update</a></div>
 						<code-preview :code="html"></code-preview>	
-					</div>
-				</div>
-            </div>
+                    </v-col>
+                </v-col>
+            </v-row>
             <style scoped>
-                textarea {
-                    width: 100%;
-                    height: calc(90vh - 30px);
-                    font-family: monospace, mono;
-                    font-size: 12pt;
-                    line-height: 2.0rem;
+                .CodeMirror {
+                    height: 90vh;
+                }
+                .editor-container {
+                    position: relative;
+                    border-right: 2px solid #eee;
+
                 }
                 iframe {
                     height: 90vh;
+                    border: none;
                 }
             </style>
 			<script>
             var snippets = require('snippets');
             
+            window.CodeMirror = require('codemirror/lib/codemirror');
+
+            var VueCodemirror = require('vue-codemirror');
+
+            require('codemirror/lib/codemirror.css');
+            require('codemirror/lib/codemirror.css');
+            require('codemirror/mode/javascript/javascript.js');
+            require('codemirror/mode/htmlmixed/htmlmixed.js');
+            require('codemirror/mode/css/css.js');
+            require('codemirror/addon/comment/comment.js');
+            require('codemirror/addon/search/search.js');
+            require('codemirror/addon/dialog/dialog.js');
+            require('codemirror/addon/dialog/dialog.css');
+
+            Vue.use(VueCodemirror, {
+                events: ['focus'] 
+            });
             
-			var header = '\t<app></app>';
+			var header = '<app></app>';
 
 			export default {
-                
                 data() {
                     var snippet = document.querySelector('#snippet').innerHTML;
 
 					return {
                         defaultSnippet: header + snippet,
-                        emptySource: header + "\n<template component=\"app\">\n</template>", 
+                        emptySource: header + "\n<template component=\"app\"><div>App</div>\n</template>", 
                         source: header + snippet,
                         html: header + snippet,
+                        in_sync: true
 					}
-				},
+                },
+                computed: {
+                    codemirror() {
+                        return this.$refs.codemirror.cminstance;
+                    }
+                },
+                watch: {
+                    source() {
+                        window.localStorage['VueBlocksTryItSource'] = this.source;
+
+                        this.in_sync = false;
+                    }
+                },
+                mounted() {
+                    this.closeDrawer();
+                    if (window.localStorage['VueBlocksTryItSource']) {
+                        this.source = window.localStorage['VueBlocksTryItSource'];
+                        this.run();
+                    }
+                },
 				methods: {
-                    run() {
+                    run(event) {
+                        if (event && event.preventDefault) {
+                            event.preventDefault();
+                        }
                         this.html = '';
                         setTimeout(() => {
                             this.html = this.source;
-                        }, 50);
+                            this.in_sync = true;
+                        }, 100);
+                    },
+                    addComponent() {
+                        this.source += `\n<template component="new-component">
+    <div>
+        New component
+    </div>
+    <style scoped>
+        /* scoped styles here */
+    </style>
+    <script>
+    export default { 
+
+    }
+    </${'script'}>
+</${'template'}>
+`
+                        setTimeout(this.selectText, 100, 'new-component');
+                    },
+                    addRoute() {
+                        this.source += `\n<template url="/new-page">
+    <div>
+        New Page 
+    </div>
+    <style scoped>
+        /* scoped styles here */
+    </style>
+    <script>
+    export default { 
+
+    }
+    </${'script'}>
+</${'template'}>
+`
+
+                        setTimeout(this.selectText, 100, '/new-page');
+                    },
+
+                    selectText(text) {
+                        this.codemirror.focus();
+                        var cursor = this.codemirror.getSearchCursor(text);
+                        // Select each found occurence will automatically
+                        // end up the last added occurence.
+                        while(cursor.findNext()) { 
+                            this.codemirror.setSelection(cursor.from(), cursor.to());
+                        }
+                    },
+                    openTodoMVC() {
+                        fetch('todomvc.html').then(r => r.text()).then(text => { 
+                            this.source = text;
+                        });
+                    },
+                    closeDrawer() {
+                        this.$emit('drawer',false);
+                    },
+                    openDrawer() {
+                        this.$emit('drawer', true);
                     }
                 }
 			}
@@ -87,8 +302,9 @@
 		</template>
 
 		<template component="code-preview">
-			<div style="display: block; width:100%; height:90vh;">  
-				<iframe :src="iframeSource" style="display: block; width:100%; height:90vh;"></iframe> 
+            <div style="display: block; width:100%;">  
+                
+				<iframe :src="iframeSource" style="display: block; width:100%;"></iframe> 
 				<!-- <pre>{{code | json }}</pre> -->
 			</div>
 			<script>
@@ -108,22 +324,61 @@
 						var path_to_vue_blocks = anchor.href;
 						var protocol = anchor.protocol;
 
-                        var vueBlocksUrls = `<script src="${path_to_vue_blocks}"></${'script'}>`;
+                        code = code.replace(/https:\/\/unpkg.com\/vue-blocks\/dist\/vue-blocks.js/g, path_to_vue_blocks);	
+
+                        var errorReporting = `<script>
+                            // Display errors processsing directly in the iframe
+                            // which is better than showing nothing.
+                            originalErrorHandler = console.error;
+
+                            var errorReporter = function(msg) {
+                                originalErrorHandler(msg);
+                                var div = document.createElement('div');
+                                div.innerHTML = '<div style="margin-top: 10px; background: #fee; border:1px solid red; padding; 10px; color:#900;"><b>[Error]</b> : ' + msg.replace('<','&lt;').replace('>','&gt;') + '</div>';
+                                document.body.append(div);
+                            };
+
+                            console.error = errorReporter;
+                            window.onerror = errorReporter;
+
+                            setTimeout(() => {
+                                console.error = originalErrorHandler;
+                            }, 5000);
+                            </${'script'}>
+                        `;
 
                         if (code.match(/<html/)) {
-                            return code.replace(/<\/head>/, vueBlocksUrls + '</head>');
+                            code = code.replace(/<\/head>/, errorReporting + '</head>');
+
+                            if (!code.match(path_to_vue_blocks)) {
+                                var vueBlocksUrls = `<script src="${path_to_vue_blocks}"></${'script'}>`;
+                                return code.replace(/<\/head>/, vueBlocksUrls + '</head>');
+                            } else {
+                                return code;
+                            }
+                        }
+                        if (!code.match('<app>')) {
+                            code = '<app></app>' + code;
+                        }
+
+                        if (this.$attrs.runner) {
+                            code = '<template component="app">' + this.$attrs.runner + '</template>' + code;
+                        } 
+                        if (!code.match('template component="app"')) {
+                            code = '<template component="app"><div><router-view></router-view></div></template>' + code;
                         }
 
 						return `<html>
 <head>
-	<link href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-	<script src="${path_to_vue_blocks}"></${'script'}>		
-	<style>body { padding: 20px; }</style>
+
 </head>
 <body>
-	<!-- preview: html -->
-	${code}
+    ${code}
+    ${errorReporting}
+
+    <script src="${path_to_vue_blocks}"></${'script'}>		
 </body>
+
 </html>`;
 					}, 
 
@@ -134,7 +389,6 @@
 					iframeSource() {
 						var dataUrl  = "data:text/html;charset=utf-8,";
 						var template = this.template;		
-
 						return dataUrl + escape(template);
 					}
 				},
@@ -143,55 +397,117 @@
 		</template>
 
 <template id="snippet">
-    <template component="app">
-        <div class="container">
-            <nav>
-                <my-navigation></my-navigation>
-            </nav>
-            <router-view></router-view>
-        </div>
-    </template>
+<template component="app">
+    <div class="container">
+        <nav>
+            <my-navigation></my-navigation>
+        </nav>
+        <router-view></router-view>
+    </div>
+</template>
 
-    <!-- reusable components -->
-    <template component="my-navigation">
-        <div class="navigation">
-            <router-link to="/">Home</router-link>
-            <router-link to="/page1">Page 1</router-link>
-            <router-link to="/page2/with-param">Page 2</router-link>
+<!-- reusable components -->
+<template component="my-navigation">
+    <div class="navigation">
+        <router-link to="/">Home</router-link>
+        <router-link to="/page1">Page 1</router-link>
+        <router-link to="/page2/with-param">Page 2</router-link>
+    </div>
+</template>
+<!-- homepage -->
+<template url="/">
+    <div>
+        Welcome to my awesome app
+        <div v-if="quote">Some nice quote:
+            <pre style="white-space: pre-wrap;">{{quote.body}}\n- {{quote.author}}</pre>
         </div>
-    </template>
-    <!-- homepage -->
-    <template url="/">
-        <div>
-            Welcome to my awesome app
-            <div v-if="quote">Some nice quote:
-                <pre style="white-space: pre-wrap;">{{quote.body}}\n- {{quote.author}}</pre>
-            </div>
-        </div>
-        <script>
-        var randomQuotes = require('random-quotes');
-        export default {
-            data() { 
-                return {
-                    quote: null
-                }
-            },
-            mounted() {
-                this.quote = randomQuotes();
+    </div>
+    <script>
+    var randomQuotes = require('random-quotes');
+    export default {
+        data() { 
+            return {
+                quote: null
+            }
+        },
+        mounted() {
+            this.quote = randomQuotes();
+        }
+    }
+    </script>
+</template>
+
+<!-- simple route -->
+<template url="/page1">
+    <div>Page 1</div>
+</template>
+
+<!-- route with params -->
+<template url="/page2/:param">
+    <div>Page 2: Param {{$route.params.param}}</div>
+</template>
+</template>
+
+    <script>
+
+// @snippet 5f8864-960ae0-59fb0f-2d4bff
+	/**
+	 * Vue ctrl-s handler
+	 * 
+	 * Usage: <main v-ctrl-s="submit">
+	 * 
+	 * @author Joshua Angnoe
+	 * @package BOS - VueBase
+	 * @common 5f8864-960ae0-59fb0f-2d4bff/ctrl-s.js
+	 */
+	
+	var autoSaveHandlers = [];
+	
+	document.addEventListener('keydown', event => {
+	    if (event.ctrlKey && event.key === "s") {
+	        event.preventDefault();
+	        console.log(autoSaveHandlers);
+			
+	        var p = event.target;
+	        while(p && p.parentNode) {
+	            if (p.autoSave) {
+	                return p.autoSave(event);
+				}
+				if (p.form) {
+					p.form.dispatchEvent(new Event('submit', { cancelable: true }));
+					return;
+				}
+	            p = p.parentNode;
+	        }
+	
+	        autoSaveHandlers[autoSaveHandlers.length-1]();
+	    }
+	});
+	
+	Vue.directive('ctrl-s', {
+	    bind(el, attrs) {
+	        console.log(attrs.value);
+	
+	        el.autoSave = () => {
+	            attrs.value();
+	        }
+	
+	        autoSaveHandlers.push( () => {
+	            attrs.value();
+	        });
+	    },
+	    unbind(el) {
+	        autoSaveHandlers.pop();
+	    }
+	});
+	
+// @endsnippet
+
+        window.createApp = function() {
+            return {
+                vuetify: new Vuetify()
             }
         }
-        </script>
-    </template>
-
-    <!-- simple route -->
-    <template url="/page1">
-        <div>Page 1</div>
-    </template>
-
-    <!-- route with params -->
-    <template url="/page2/:param">
-        <div>Page 2: Param {{$route.params.param}}</div>
-    </template>
-</template>
+    </script>
     </body>
 </html>
