@@ -22,7 +22,8 @@ function initializeVueBlocks(Vue, VueRouter) {
             var routes = VueBlocks.collectRoutes();
             var router = null;
 
-            if (routes.length && VueRouter) {
+            if (VueRouter) {
+                // always do VueRouter even though there are no routes.
                 var router = new VueRouter({
                     routes: routes
                 })

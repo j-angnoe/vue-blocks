@@ -420,6 +420,23 @@ function require_script(name) {
 
 function preload_module(name, returnDefault) {
     var fn = 'resolveImport' + Math.round(Math.random()*(new Date).getTime()).toString(16).substr(0,8);
+
+    if (name.match(/\.css(\?.+)*$/)) {
+        return new Promise(resolve => {
+            url = name;
+            if (!name.match(/^https?:\/\//)) {
+                url = 'https://unpkg.com/' + name;
+            }
+            var link = document.createElement('link');
+            link.setAttribute('rel','stylesheet');
+            link.setAttribute('href', url);
+            document.body.appendChild(link);
+
+            window[name] = {};
+            resolve();
+        });
+    }
+    
     return new Promise(resolve => {
         window[fn] = resolve;
         var script = document.createElement('script');

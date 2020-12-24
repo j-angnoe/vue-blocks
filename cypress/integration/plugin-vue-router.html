@@ -25,7 +25,7 @@
     <script src="https://unpkg.com/vue-router"></script>
 
     <script>
-        Vue.use(VueBlocks);
+        Vue.use(VueBlocks, { registerRoutes: true });
         Vue.use(VueRouter);
 
         new Vue({
@@ -41,7 +41,9 @@
                                 <router-link to="/page2">Page 2</router-link>
                             </div>` 
                         } 
-                    }
+                    },
+                    // or do it yourself:
+                    // ...VueBlocks.collectRoutes()
                 ]
             })
         });        
