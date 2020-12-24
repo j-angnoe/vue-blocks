@@ -3,7 +3,7 @@
 Vue Blocks is a Vue Plugin that extracts and registers vue components from an HTML 
 document, without external tooling. This is done by looking for `<template component="">` tags. 
 Within this tag you may write an HTML template, scoped styles and vue component javascript, just like you do when
-writing Vue Single File Components. Lots of benefit in just over 10 KB ([current size](https://img.shields.io/github/size/j-angnoe/vue-blocks/dist/plugin.js))
+writing Vue Single File Components. Lots of benefit in just over 10 KB ![current size](https://img.shields.io/github/size/j-angnoe/vue-blocks/dist/plugin.js)
 
 ## The syntax
 
