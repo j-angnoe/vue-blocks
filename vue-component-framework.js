@@ -62,7 +62,7 @@ function domComponentCollectorRaw(scriptVariables) {
                 code = code.replace(/\sdestructor\s*\(/, 'destroyed(');
                 process = function(obj) {                    
                     var data = new obj;
-                    var {props, watch, computed, components, directives, ...data} = data;
+                    var {props, watch, computed, components, directives, filters, ...data} = data;
                     var lifeCycleMethods = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'beforeUnmount', 'unmounted', 'errorCaptured', 'renderTracked', 'renderTriggered','destroyed','beforeDestroy'];
                     var methods = {};
                     var lifeCycle = {};
@@ -88,6 +88,7 @@ function domComponentCollectorRaw(scriptVariables) {
                         components,
                         directives,
                         ...lifeCycle,
+                        filters,
                         methods
                     }
                     return comp;
