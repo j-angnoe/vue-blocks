@@ -62,7 +62,12 @@ function domComponentCollectorRaw(scriptVariables) {
                 code = code.replace(/\sdestructor\s*\(/, 'destroyed(');
                 process = function(obj) {                    
                     var data = new obj;
-                    var {props, watch, computed, components, directives, filters, ...data} = data;
+                    
+                    // filters.. filters can be a prop but it can also be data.
+                    // it's ambigious, so dont remove filters from data because it may brake
+                    // applications and there is no risk to define them as Vue filters as well.
+                    var {props, watch, computed, components, directives, ...data} = data;
+                    
                     var lifeCycleMethods = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'beforeUnmount', 'unmounted', 'errorCaptured', 'renderTracked', 'renderTriggered','destroyed','beforeDestroy'];
                     var methods = {};
                     var lifeCycle = {};
@@ -88,7 +93,7 @@ function domComponentCollectorRaw(scriptVariables) {
                         components,
                         directives,
                         ...lifeCycle,
-                        filters,
+                        filters: data.filters || {},
                         methods
                     }
                     return comp;
@@ -98,7 +103,7 @@ function domComponentCollectorRaw(scriptVariables) {
 
             var require_regex = /require\s*\(['"]([^'"]+)['"]\)(\.)?/ig;
 
-    		code.replace(require_regex, (...match) => {
+    		code.replace(require_regex, (...match) => {                
                 if (!window[match[1]]) {
                     var returnDefault = match[2] ? false : true;
                     matches.push(preload_module(match[1], returnDefault));
@@ -177,11 +182,12 @@ function domComponentCollector(componentName, scriptVariables) {
     var containedTemplate = this.content.querySelector('script[type="text/template"]');
     [...this.content.querySelectorAll('style')].forEach(s => {
         
+        // Keep the component source original.
         if (s.hasAttribute('scoped')) { 
-            s.parentNode.removeChild(s);
+            // s.parentNode.removeChild(s);
             scopedStyle += s.innerHTML;
         } else {
-            document.head.appendChild(s);
+            document.head.appendChild(s.cloneNode());
         }
     });
 
@@ -189,7 +195,12 @@ function domComponentCollector(componentName, scriptVariables) {
     if (containedTemplate) {
         html = containedTemplate.innerHTML;
     } else {
-        html = this.innerHTML;
+        var clone = this.cloneNode(true);
+        // remove all stylesheets from template.
+        clone.content.querySelectorAll('style').forEach(node => {
+            node.parentNode.removeChild(node);
+        });
+        html = clone.innerHTML;
     }
 
     if (scopedStyle) {
@@ -364,13 +375,13 @@ function collectRoutes(context, handled) {
     [...context.querySelectorAll('template[sub-url]')].forEach(function (el) {
 
         var subUrl = el.getAttribute('sub-url')
-        var foundParent = false
+        var foundParent = '';
         
         var parentUrl;
 
         for (parentUrl in lookup) {
-            if (parentUrl !== '/' && subUrl.indexOf(parentUrl) === 0) {
-                foundParent = parentUrl
+            if (subUrl.indexOf(parentUrl) === 0) {
+                foundParent = parentUrl > foundParent ? parentUrl : foundParent;
                 //break;
             }
         }
@@ -379,13 +390,15 @@ function collectRoutes(context, handled) {
             throw new Error('sub-url could not find parent for url `' + subUrl + '`');
         }
 
-        // console.log("Found parent " + foundParent + " for sub url " + subUrl)       
+        console.log("Found parent " + foundParent + " for sub url " + subUrl)       
 
         if (!lookup[foundParent].children) {
             lookup[foundParent].children = []
         }
 
-        var childRelativeUrl = subUrl.substr(foundParent.length + 1);
+        // This relative url should not contain the foundParent's url.
+        // and it should not start with a slash (/)
+        var childRelativeUrl = subUrl.substr(foundParent.length).replace(/^\//,'');
         var childComponent = {path: childRelativeUrl, component: domComponentCollector.call(el) };       
 
         lookup[foundParent].children.push(childComponent)
@@ -393,7 +406,6 @@ function collectRoutes(context, handled) {
         if (subUrl.substr(foundParent.length).length > 1 && !(subUrl in lookup)) {
             lookup[subUrl] = childComponent;
         }
-
     })
 
 
