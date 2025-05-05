@@ -2,15 +2,15 @@
 
 context('Actions', () => {
     function navigate(url) {
-        var baseUrl = 'http://localhost:8080/cypress/integration/components.html';
+        var baseUrl = 'http://localhost:8080/cypress/e2e/components.html';
         url = url || '';
-        cy.visit(baseUrl + url);
+        return cy.visit(baseUrl + url);
     }  
     // https://on.cypress.io/interacting-with-elements
   
-    it('On the right page', () => {
-        navigate();
+    beforeEach(() => navigate());
 
+    it('On the right page', () => {
         cy.get('title').should('contain', 'Vue Blocks Test Page Components')
     });
 

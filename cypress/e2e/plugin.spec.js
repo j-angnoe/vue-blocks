@@ -2,19 +2,20 @@ context('Actions', () => {
     // https://on.cypress.io/interacting-with-elements
   
     it('webserver is working properly', () => {
-        cy.visit('http://localhost:8080/cypress/integration/plugin-normal.html');
-
+        cy.visit('http://localhost:8080/cypress/e2e/plugin-normal.html');
+        
         cy.get('title').should('contain', 'Vue Blocks Test Page Plugin')
     });
-
+    
     it('VueBlocks as plugin does its job', () => {
+        cy.visit('http://localhost:8080/cypress/e2e/plugin-normal.html');
         
         cy.get('#app-container').should('contain', 'Success: VueBlocks plugin worked!');
 
     });
 
     it('VueBlocks works under asynchronous conditions', () => {
-        cy.visit('http://localhost:8080/cypress/integration/plugin-async.html');
+        cy.visit('http://localhost:8080/cypress/e2e/plugin-async.html');
         cy.get('title').should('contain', 'Vue Blocks Test Page Plugin Async')
 
         cy.get('#app-container').should('contain', 'Success: VueBlocks plugin async worked!');
@@ -27,7 +28,7 @@ context('Actions', () => {
 
 
     it('VueBlocks plugin works in concert with external Vue Router', () => {
-        cy.visit('http://localhost:8080/cypress/integration/plugin-vue-router.html');
+        cy.visit('http://localhost:8080/cypress/e2e/plugin-vue-router.html');
         cy.get('title').should('contain', 'Vue Blocks Test Page Plugin VueRouter')
 
         cy.get('#app-container').should('contain', 'Success: VueBlocks plugin worked!');
