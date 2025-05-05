@@ -4,7 +4,7 @@
   "description": "Vue Blocks Framework",
   "main": "index.js",
   "scripts": {
-    "start": "static .;",
+    "start": "php -S localhost:8080 -t .",
     "test": "cypress run",
     "cypress": "cypress open -P .",
     "build:bundle": "parcel build ./bundled.js -o dist/vue-blocks.js --no-source-maps",
@@ -27,6 +27,7 @@
   "author": "Joshua Angnoe",
   "license": "ISC",
   "dependencies": {
+    "parcel": "1.12.*",
     "vue": "^2.6.12",
     "vue-router": "^2.8.1"
   }

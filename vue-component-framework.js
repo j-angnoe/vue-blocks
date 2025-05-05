@@ -181,13 +181,19 @@ function domComponentCollector(componentName, scriptVariables) {
     // support one script type="text/template" support.
     var containedTemplate = this.content.querySelector('script[type="text/template"]');
     [...this.content.querySelectorAll('style')].forEach(s => {
-        
+        // Empty styles should be no-ops.
+        if (s.innerHTML.trim().length == 0) { 
+            return;
+        }
+
         // Keep the component source original.
         if (s.hasAttribute('scoped')) { 
             // s.parentNode.removeChild(s);
             scopedStyle += s.innerHTML;
         } else {
-            document.head.appendChild(s.cloneNode());
+            var newStyle = document.createElement('style');
+            newStyle.innerHTML = s.innerHTML;
+            document.head.appendChild(newStyle);
         }
     });
 

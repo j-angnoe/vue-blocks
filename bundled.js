@@ -36,7 +36,7 @@ function initializeVueBlocks(Vue, VueRouter) {
                 router: router,
             }).$mount('app')
         })
-    })
+    }, { once: true});
 
     var isVue2 = Vue.version.match(/^2/);
 
