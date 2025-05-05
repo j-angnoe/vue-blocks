@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/j-angnoe/vue-blocks"
+    "url": "git+https://github.com/j-angnoe/vue-blocks.git"
   },
   "files": [
     "*.js",
