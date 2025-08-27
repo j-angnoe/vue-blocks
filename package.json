@@ -27,7 +27,7 @@
   "author": "Joshua Angnoe",
   "license": "ISC",
   "dependencies": {
-    "parcel": "1.12.*",
+    "parcel": "2.15.*",
     "vue": "^2.6.12",
     "vue-router": "^2.8.1"
   }
